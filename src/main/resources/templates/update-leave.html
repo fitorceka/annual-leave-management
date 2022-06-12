@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+    <title>Update Leave</title>
+
+    <style>
+        .center-block {
+            display: block;
+            margin-right: auto;
+            margin-left: auto;
+        }
+    </style>
+
+</head>
+
+<body style="background-color: beige">
+<div style="text-align: center" class="container">
+    <h3 style="color: blue">Update Leave</h3>
+    <hr>
+
+    <form action="#" th:action="@{/user/updateLeave}" th:object="${leave}" method="post">
+
+        <input hidden="hidden" th:field="*{leaveId}">
+
+        <label style="color: blue">Leave Reason:
+            <select th:field="*{leaveReason}">
+                <option value=""></option>
+                <option value="Annual Leave">Annual Leave</option>
+                <option value="Sick Leave">Sick Leave</option>
+                <option value="Personal Leave">Personal Leave</option>
+            </select>
+        </label>
+
+        <input type="date" th:name="fromDate" th:field="*{fromDate}" class="center-block form-control mb-4 col-4" placeholder="From Date" required/>
+        <input type="date" th:name="toDate" th:field="*{toDate}" class="center-block form-control mb-4 col-4" placeholder="To Date" required/>
+
+        <hr>
+
+        <button type="submit" class="btn btn-info col-2">Update Leave</button>
+    </form>
+
+    <hr>
+    <hr>
+    <a th:href="@{/user/userHome}">Back To User Home</a>
+</div>
+
+</body>
+</html>

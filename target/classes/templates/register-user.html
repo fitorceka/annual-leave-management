@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:text-align="http://www.w3.org/1999/xhtml">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+
+    <title>Save User</title>
+
+    <style>
+        .center-block {
+            display: block;
+            margin-right: auto;
+            margin-left: auto;
+        }
+    </style>
+</head>
+
+<body style="background-color: beige">
+<div style="text-align: center" class="container">
+    <h3 style="color: blue">Register New User</h3>
+    <hr>
+
+    <form action="#" th:action="@{/admin/saveUser}" th:object="${user}" method="post">
+
+        <input hidden="hidden" th:field="*{userId}">
+
+        <input type="text" th:field="*{firstName}" class="center-block form-control mb-4 col-4" placeholder="First Name"/>
+        <input type="text" th:field="*{lastName}" class="center-block form-control mb-4 col-4" placeholder="Last Name"/>
+        <input type="email" th:field="*{email}" class="center-block form-control mb-4 col-4" placeholder="Email"/>
+        <input type="password" th:field="*{password}" class="center-block form-control mb-4 col-4" placeholder="Password"/>
+        <input type="text" th:field="*{username}" class="center-block form-control mb-4 col-4" placeholder="Username"/>
+        <input type="date" th:field="*{hireDate}" class="center-block form-control mb-4 col-4" placeholder="Hire Date"/>
+        <label style="color: blue">ROLE:</label>
+        <select th:field="*{role}">
+                <option value=""></option>
+                <option value="MANAGER">MANAGER</option>
+                <option value="EMPLOYEE">EMPLOYEE</option>
+        </select>
+        <hr>
+        <button type="submit" class="btn btn-info col-2">Save</button>
+    </form>
+
+    <hr>
+    <a th:href="@{/mainApp}">Back to Main App</a>
+</div>
+</body>
+</html>

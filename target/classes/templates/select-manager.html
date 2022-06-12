@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+    <title>Select Manager</title>
+
+    <style>
+        .center-block {
+            display: block;
+            margin-right: auto;
+            margin-left: auto;
+        }
+    </style>
+</head>
+
+<body style="background-color: beige">
+
+<div style="text-align: center" class="container">
+    <h3 style="color: blue">Add Employee To Manager</h3>
+    <hr>
+    <div>
+        <h5 th:text="${managers.size() + ' active managers in the system'}" style="color: red"></h5>
+    </div>
+
+    <hr>
+
+    <form action="#" th:action="@{/admin/setManager}" th:object="${user}" method="post">
+        <input hidden="hidden" th:field="*{userId}">
+
+<!--        <input type="email" th:name="managerEmail" class="form-control mb-4 col-4" placeholder="Manager Email"/>-->
+        <select th:name="managerEmail" class="center-block">
+            <optgroup th:each="manager:${managers}">
+                <option th:text="${manager.email}"></option>
+            </optgroup>
+        </select>
+        <hr>
+        <button type="submit" class="btn btn-info col-2">Set Manager</button>
+    </form>
+
+    <hr>
+    <hr>
+    <a th:href="@{/admin/users}">Back to Users</a>
+
+</div>
+
+</body>
+</html>
