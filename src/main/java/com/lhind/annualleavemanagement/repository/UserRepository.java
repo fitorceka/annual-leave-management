@@ -1,6 +1,6 @@
 package com.lhind.annualleavemanagement.repository;
 
-import com.lhind.annualleavemanagement.model.User;
+import com.lhind.annualleavemanagement.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

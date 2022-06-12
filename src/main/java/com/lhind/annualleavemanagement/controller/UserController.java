@@ -1,12 +1,13 @@
 package com.lhind.annualleavemanagement.controller;
 
-import com.lhind.annualleavemanagement.model.Leave;
-import com.lhind.annualleavemanagement.model.User;
+import com.lhind.annualleavemanagement.entity.Leave;
+import com.lhind.annualleavemanagement.entity.User;
 import com.lhind.annualleavemanagement.security.CustomUserDetails;
 import com.lhind.annualleavemanagement.service.LeaveService;
 import com.lhind.annualleavemanagement.service.UserService;
 import com.lhind.annualleavemanagement.util.CurrentAuthenticatedUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

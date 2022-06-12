@@ -1,7 +1,7 @@
 package com.lhind.annualleavemanagement.service;
 
-import com.lhind.annualleavemanagement.model.Leave;
-import com.lhind.annualleavemanagement.model.User;
+import com.lhind.annualleavemanagement.entity.Leave;
+import com.lhind.annualleavemanagement.entity.User;
 import com.lhind.annualleavemanagement.repository.LeaveRepository;
 import com.lhind.annualleavemanagement.repository.UserRepository;
 import com.lhind.annualleavemanagement.security.CustomUserDetails;

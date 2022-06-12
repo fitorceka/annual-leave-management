@@ -1,6 +1,6 @@
 package com.lhind.annualleavemanagement.service;
 
-import com.lhind.annualleavemanagement.model.User;
+import com.lhind.annualleavemanagement.entity.User;
 import com.lhind.annualleavemanagement.security.CustomUserDetails;
 import com.lhind.annualleavemanagement.util.Constants;
 import com.lhind.annualleavemanagement.util.CurrentAuthenticatedUser;

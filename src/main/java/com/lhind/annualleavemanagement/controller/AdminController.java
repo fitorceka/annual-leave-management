@@ -1,8 +1,10 @@
 package com.lhind.annualleavemanagement.controller;
 
-import com.lhind.annualleavemanagement.model.User;
+import com.lhind.annualleavemanagement.entity.User;
 import com.lhind.annualleavemanagement.service.UserService;
+import com.lhind.annualleavemanagement.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,6 +14,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Controller
+@PreAuthorize(Constants.ROLE_ADMIN)
 public class AdminController {
 
     @Autowired

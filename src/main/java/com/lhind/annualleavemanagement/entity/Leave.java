@@ -1,4 +1,4 @@
-package com.lhind.annualleavemanagement.model;
+package com.lhind.annualleavemanagement.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.format.annotation.DateTimeFormat;
