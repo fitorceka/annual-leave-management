@@ -1,6 +1,6 @@
 package com.lhind.annualleavemanagement.config;
 
-import com.lhind.annualleavemanagement.service.UserService;
+import com.lhind.annualleavemanagement.user.service.UserService;
 import com.lhind.annualleavemanagement.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,15 +12,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
 import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    private DataSource dataSource;
+public class WebSecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -41,13 +39,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return authenticationProvider;
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(authenticationProvider());
-    }
-
-    @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
+    @Bean
+    protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .authorizeRequests().antMatchers("/login", "/")
                 .permitAll()
@@ -60,8 +53,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .loginPage("/login")
                 .usernameParameter("email")
+                .passwordParameter("password")
                 .defaultSuccessUrl("/mainApp")
                 .permitAll().and().logout().permitAll()
                 .and().exceptionHandling().accessDeniedPage("/access-denied");
+
+        httpSecurity.headers().frameOptions().sameOrigin();
+        
+        return httpSecurity.build();
     }
 }

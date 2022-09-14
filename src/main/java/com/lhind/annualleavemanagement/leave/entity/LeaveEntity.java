@@ -1,6 +1,7 @@
-package com.lhind.annualleavemanagement.entity;
+package com.lhind.annualleavemanagement.leave.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.lhind.annualleavemanagement.user.entity.UserEntity;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -8,14 +9,14 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "leaves")
-public class Leave {
+public class LeaveEntity {
 
     @Id
     @Column(name = "leave_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long leaveId;
 
-    @Column(name = "leave_reason", nullable = false)
+    @Column(name = "leave_reason", nullable = false, length = 3)
     private String leaveReason;
 
     @Column(name = "from_date", nullable = false)
@@ -35,7 +36,7 @@ public class Leave {
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "users_id")
-    private User users;
+    private UserEntity user;
 
     public Long getLeaveId() {
         return leaveId;
@@ -85,11 +86,11 @@ public class Leave {
         this.status = status;
     }
 
-    public User getUser() {
-        return users;
+    public UserEntity getUser() {
+        return user;
     }
 
-    public void setUser(User users) {
-        this.users = users;
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
 }

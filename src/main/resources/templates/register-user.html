@@ -21,9 +21,9 @@
     </style>
 </head>
 
-<body style="background-color: beige">
+<body style="background-color: grey">
 <div style="text-align: center" class="container">
-    <h3 style="color: blue">Register New User</h3>
+    <h3 style="color: black">Register New User</h3>
     <hr>
 
     <form action="#" th:action="@{/admin/saveUser}" th:object="${user}" method="post">
@@ -36,7 +36,7 @@
         <input type="password" th:field="*{password}" class="center-block form-control mb-4 col-4" placeholder="Password"/>
         <input type="text" th:field="*{username}" class="center-block form-control mb-4 col-4" placeholder="Username"/>
         <input type="date" th:field="*{hireDate}" class="center-block form-control mb-4 col-4" placeholder="Hire Date"/>
-        <label style="color: blue">ROLE:</label>
+        <label style="color: black">ROLE:</label>
         <select th:field="*{role}">
                 <option value=""></option>
                 <option value="MANAGER">MANAGER</option>
@@ -47,7 +47,7 @@
     </form>
 
     <hr>
-    <a th:href="@{/mainApp}">Back to Main App</a>
+    <a th:href="@{/mainApp}" style="color: blue">Back to Main App</a>
 </div>
 </body>
 </html>

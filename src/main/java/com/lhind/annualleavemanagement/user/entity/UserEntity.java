@@ -1,6 +1,7 @@
-package com.lhind.annualleavemanagement.entity;
+package com.lhind.annualleavemanagement.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.lhind.annualleavemanagement.leave.entity.LeaveEntity;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,12 +51,12 @@ public class User {
     @Column(name = "days_from_hire", nullable = false)
     private long daysFromHire;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "manager_id")
-    private User manager;
+    private UserEntity manager;
 
-    @OneToMany(mappedBy = "users")
-    private List<Leave> leaveList;
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private List<LeaveEntity> leaves;
 
     public Long getUserId() {
         return userId;
@@ -137,19 +138,19 @@ public class User {
         this.daysFromHire = daysFromHire;
     }
 
-    public User getManager() {
+    public UserEntity getManager() {
         return manager;
     }
 
-    public void setManager(User manager) {
+    public void setManager(UserEntity manager) {
         this.manager = manager;
     }
 
-    public List<Leave> getLeaveList() {
-        return leaveList;
+    public List<LeaveEntity> getLeaves() {
+        return leaves;
     }
 
-    public void setLeaveList(List<Leave> leaveList) {
-        this.leaveList = leaveList;
+    public void setLeaves(List<LeaveEntity> leaves) {
+        this.leaves = leaves;
     }
 }

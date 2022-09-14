@@ -23,14 +23,14 @@
 </head>
 <body style="background-color: beige">
 <div class="container-fluid text-center">
-    <form th:action="@{/login}" method="post" style="max-width: 400px; margin: 0 auto;" class="position">
+    <form th:action="@{/login}" method="post" style="max-width: 500px; margin: 0 auto;" class="position">
 
         <div th:if="${param.logout}">
             <p class="text-warning">You have been logged out.</p>
         </div>
 
         <div class="border border-secondary p-3 rounded">
-            <p>Please Login</p>
+            <p style="color: black">Please Login</p>
             <p>
                 <input type="text" name="email" class="form-control" placeholder="Email" required autofocus/>
             </p>
@@ -42,7 +42,7 @@
             </p>
 
             <div th:if="${param.error}">
-                <i class="failed">Invalid email/password</i>
+                <i class="failed" style="color: red">Invalid email or password</i>
                 <hr>
             </div>
 

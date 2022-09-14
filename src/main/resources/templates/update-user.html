@@ -23,7 +23,7 @@
 
 <body style="background-color: beige">
 <div style="text-align: center" class="container">
-    <h3 style="color: blue">Update User</h3>
+    <h3 style="color: black">Update User</h3>
     <hr>
 
     <form action="#" th:action="@{/admin/updateUser}" th:object="${user}" method="post">
@@ -42,7 +42,7 @@
         <label>Username</label>
         <input type="text" th:name="username" th:field="*{username}" class="center-block form-control mb-4 col-4" placeholder="Username"/>
 
-        <label style="color: blue">ROLE:</label>
+        <label style="color: black">ROLE:</label>
         <select th:field="*{role}" th:name="role">
             <option value=""></option>
             <option value="MANAGER">MANAGER</option>
@@ -55,9 +55,9 @@
 
     <hr>
     <hr>
-    <a th:href="@{/admin/users}">Back to Users</a>
-    <hr>
-    <a th:href="@{/mainApp}">Back to Main App</a>
+    <a th:href="@{/admin/users}" style="color: blue">Users</a>
+    &emsp;
+    <a th:href="@{/mainApp}" style="color: blue">Home</a>
 </div>
 </body>
 </html>

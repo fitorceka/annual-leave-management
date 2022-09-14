@@ -1,9 +1,9 @@
-# annual-leave-management
+# annual-leaveEntity-management
 ## this is a spring boot application
 ## some of the funcionalites are:
-### Admin can add, update, delete and change password to users
-### Manager can monitor users that are in his department, approve or deny leave request made by the users and change his password
-### Users can add, update, delete leave request and change their password
+### Admin can add, update, delete and change password to userEntities
+### Manager can monitor userEntities that are in his department, approve or deny leaveEntity request made by the userEntities and change his password
+### Users can add, update, delete leaveEntity request and change their password
 
 # Running the app:
 ## An existing admin should be available in the system

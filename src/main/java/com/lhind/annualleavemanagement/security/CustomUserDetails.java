@@ -1,6 +1,6 @@
 package com.lhind.annualleavemanagement.security;
 
-import com.lhind.annualleavemanagement.entity.User;
+import com.lhind.annualleavemanagement.user.entity.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,15 +11,15 @@ import java.util.List;
 
 public class CustomUserDetails implements UserDetails {
 
-    private final User user;
+    private final UserEntity userEntity;
 
-    public CustomUserDetails(User user) {
-        this.user = user;
+    public CustomUserDetails(UserEntity userEntity) {
+        this.userEntity = userEntity;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        String role = user.getRole();
+        String role = userEntity.getRole();
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
         authorities.add(new SimpleGrantedAuthority(role));
@@ -29,16 +29,16 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return userEntity.getPassword();
     }
 
     public Long getId() {
-        return user.getUserId();
+        return userEntity.getUserId();
     }
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return userEntity.getEmail();
     }
 
     @Override
@@ -62,6 +62,6 @@ public class CustomUserDetails implements UserDetails {
     }
 
     public String getFullName() {
-        return user.getFirstName() + " " + user.getLastName();
+        return userEntity.getFirstName() + " " + userEntity.getLastName();
     }
 }

@@ -1,7 +1,8 @@
-package com.lhind.annualleavemanagement.service;
+package com.lhind.annualleavemanagement.util.service;
 
-import com.lhind.annualleavemanagement.entity.User;
 import com.lhind.annualleavemanagement.security.CustomUserDetails;
+import com.lhind.annualleavemanagement.user.entity.UserEntity;
+import com.lhind.annualleavemanagement.user.service.UserService;
 import com.lhind.annualleavemanagement.util.Constants;
 import com.lhind.annualleavemanagement.util.CurrentAuthenticatedUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,31 +23,35 @@ public class EmailService {
         this.javaMailSender = javaMailSender;
     }
 
-    public void sendMailToManager(String subject, String message) throws Exception {
+    public void sendMailToManager(String subject, String message) {
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 
         CustomUserDetails currentAuthenticatedUser = CurrentAuthenticatedUser.getCurrentUser();
-        User user = userService.findUserById(currentAuthenticatedUser.getId());
+        UserEntity userEntity = userService.findUserById(currentAuthenticatedUser.getId());
 
-        if (!user.getRole().equals(Constants.ROLE_EMPLOYEE)) {
+        if (!userEntity.getRole().equals(Constants.ROLE_EMPLOYEE)) {
             throw new RuntimeException(Constants.AUTHENTICATED_USER_IS_NOT_AN_EMPLOYEE);
         }
-        simpleMailMessage.setTo(user.getManager().getEmail());
+        simpleMailMessage.setTo(userEntity.getManager().getEmail());
         simpleMailMessage.setSubject(subject);
         simpleMailMessage.setText(message);
 
-        simpleMailMessage.setFrom(user.getEmail());
-
-        javaMailSender.send(simpleMailMessage);
+        simpleMailMessage.setFrom(userEntity.getEmail());
+        
+        try {
+            javaMailSender.send(simpleMailMessage);
+        } catch (Exception e) {
+            System.out.println("Cannot send email");
+        }
     }
 
-    public void sendMailToEmployee(User employee, String subject, String message) throws Exception {
+    public void sendMailToEmployee(UserEntity employee, String subject, String message) {
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 
         CustomUserDetails currentAuthenticatedUser = CurrentAuthenticatedUser.getCurrentUser();
-        User user = userService.findUserById(currentAuthenticatedUser.getId());
+        UserEntity userEntity = userService.findUserById(currentAuthenticatedUser.getId());
 
-        if (!user.getRole().equals(Constants.ROLE_MANAGER)) {
+        if (!userEntity.getRole().equals(Constants.ROLE_MANAGER)) {
             throw new RuntimeException(Constants.AUTHENTICATED_USER_IS_NOT_A_MANAGER);
         }
 
@@ -54,8 +59,12 @@ public class EmailService {
         simpleMailMessage.setSubject(subject);
         simpleMailMessage.setText(message);
 
-        simpleMailMessage.setFrom(user.getEmail());
+        simpleMailMessage.setFrom(userEntity.getEmail());
 
-        javaMailSender.send(simpleMailMessage);
+        try {
+            javaMailSender.send(simpleMailMessage);
+        } catch (Exception e) {
+            System.out.println("Cannot send email");
+        }
     }
 }

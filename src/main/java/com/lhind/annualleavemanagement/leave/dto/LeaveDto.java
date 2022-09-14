@@ -1,16 +1,23 @@
-package com.lhind.annualleavemanagement.dto;
+package com.lhind.annualleavemanagement.leave.dto;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.lhind.annualleavemanagement.user.dto.UserDto;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LeaveDto {
 
     private Long leaveId;
     private String leaveReason;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate fromDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate toDate;
     private Long noOfDays;
     private String status;
-    private UserDto users;
+    private UserDto user;
 
     public Long getLeaveId() {
         return leaveId;
@@ -60,11 +67,11 @@ public class LeaveDto {
         this.status = status;
     }
 
-    public UserDto getUsers() {
-        return users;
+    public UserDto getUser() {
+        return user;
     }
 
-    public void setUsers(UserDto users) {
-        this.users = users;
+    public void setUser(UserDto user) {
+        this.user = user;
     }
 }

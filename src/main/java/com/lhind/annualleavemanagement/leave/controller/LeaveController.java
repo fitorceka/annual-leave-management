@@ -1,16 +1,21 @@
-package com.lhind.annualleavemanagement.controller;
+package com.lhind.annualleavemanagement.leave.controller;
 
-import com.lhind.annualleavemanagement.entity.Leave;
-import com.lhind.annualleavemanagement.entity.User;
+import com.lhind.annualleavemanagement.leave.dto.LeaveDto;
+import com.lhind.annualleavemanagement.leave.mapper.LeaveMapper;
+import com.lhind.annualleavemanagement.leave.service.LeaveService;
 import com.lhind.annualleavemanagement.security.CustomUserDetails;
-import com.lhind.annualleavemanagement.service.LeaveService;
-import com.lhind.annualleavemanagement.service.UserService;
+import com.lhind.annualleavemanagement.user.dto.UserDto;
+import com.lhind.annualleavemanagement.user.mapper.UserMapper;
+import com.lhind.annualleavemanagement.user.service.UserService;
 import com.lhind.annualleavemanagement.util.CurrentAuthenticatedUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -25,9 +30,15 @@ public class LeaveController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private LeaveMapper mapper;
+
+    @Autowired
+    private UserMapper userMapper;
+
     @GetMapping("/manager/manageAllEmployeeLeavesUnderManager")
     public String showAllEmployeeLeavesUnderManager(Model model) throws Exception {
-        List<Leave> allEmployeeLeavesUnderManager = leaveService.findAllEmployeeLeavesUnderManager();
+        List<LeaveDto> allEmployeeLeavesUnderManager = mapper.toDtos(leaveService.findAllEmployeeLeavesUnderManager());
 
         model.addAttribute("allEmployeesLeavesUnderManager", allEmployeeLeavesUnderManager);
 
@@ -35,11 +46,11 @@ public class LeaveController {
     }
 
     @GetMapping("/user/createNewLeaveRequest")
-    public String showFormForLeave(Model model) throws Exception {
-        Leave leave = new Leave();
+    public String showFormForLeave(Model model) {
+        LeaveDto leave = new LeaveDto();
 
         CustomUserDetails customUserDetails = CurrentAuthenticatedUser.getCurrentUser();
-        User user = userService.findUserById(customUserDetails.getId());
+        UserDto user = userMapper.toDto(userService.findUserById(customUserDetails.getId()));
 
         model.addAttribute("leave", leave);
         model.addAttribute("user", user);
@@ -48,15 +59,15 @@ public class LeaveController {
     }
 
     @PostMapping("/user/saveNewLeave")
-    public String saveNewLeave(@ModelAttribute("leave") @Valid Leave leave) throws Exception {
-        leaveService.saveLeaveToCurrentlyAuthenticatedUser(leave);
+    public String saveNewLeave(@ModelAttribute("leave") @Valid LeaveDto leave) throws Exception {
+        leaveService.saveLeaveToCurrentlyAuthenticatedUser(mapper.toEntity(leave));
 
         return "redirect:/user/manageMyLeaves";
     }
 
     @GetMapping("/user/showLeaveFormForUpdate")
     public String showLeaveFormForUpdate(@RequestParam("leaveId") Long id, Model model) throws Exception {
-        Leave leave = leaveService.findLeaveById(id);
+        LeaveDto leave = mapper.toDto(leaveService.findLeaveById(id));
 
         model.addAttribute("leave", leave);
 
@@ -64,9 +75,9 @@ public class LeaveController {
     }
 
     @PostMapping("/user/updateLeave")
-    public String updateLeave(@ModelAttribute("leave") @Valid Leave leave, @RequestParam("leaveReason") String leaveReason, @RequestParam("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate
+    public String updateLeave(@ModelAttribute("leave") @Valid LeaveDto dto, @RequestParam("leaveReason") String leaveReason, @RequestParam("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate
             , @RequestParam("toDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) throws Exception {
-        leaveService.updateLeave(leave.getLeaveId(), leaveReason, fromDate, toDate);
+        leaveService.updateLeave(dto.getLeaveId(), leaveReason, fromDate, toDate);
 
         return "redirect:/user/manageMyLeaves";
     }
