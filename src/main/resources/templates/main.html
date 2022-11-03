@@ -7,15 +7,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
     <title>Main Page</title>
     <style>
         .position {
-            position:absolute;
-            top:20%;
-            right:0;
-            left:0;
+            position: absolute;
+            top: 20%;
+            right: 0;
+            left: 0;
         }
     </style>
 </head>
@@ -29,7 +30,8 @@
 
     <hr>
 
-    <h4 th:align="center" style="color: black" class="align-content-center">Welcome <b>[[${#request.userPrincipal.principal.fullName}]]</b></h4>
+    <h4 th:align="center" style="color: black" class="align-content-center">Welcome <b>[[${#request.userPrincipal.principal.fullName}]]</b>
+    </h4>
 
     <form th:action="@{/logout}" method="post">
         <div style="text-align: end">
@@ -39,15 +41,18 @@
 
     <hr>
     <div style="text-align: center">
-        <a th:href="@{/admin/users}" style="text-align: center" class="btn btn-primary btn-sm mb-3 form-check-inline">Admin Home</a>
+        <a th:href="@{/admin/users}" style="text-align: center" class="btn btn-primary btn-sm mb-3 form-check-inline">Admin
+            Home</a>
     </div>
     <hr>
     <div style="text-align: center">
-        <a th:href="@{/manager/managerHome}" style="text-align: center" class="btn btn-primary btn-sm mb-3 form-check-inline">Manager Home</a>
+        <a th:href="@{/manager/managerHome}" style="text-align: center"
+           class="btn btn-primary btn-sm mb-3 form-check-inline">Manager Home</a>
     </div>
     <hr>
     <div style="text-align: center">
-        <a th:href="@{/user/userHome}" style="text-align: center" class="btn btn-primary btn-sm mb-3 form-check-inline">User Home</a>
+        <a th:href="@{/user/userHome}" style="text-align: center" class="btn btn-primary btn-sm mb-3 form-check-inline">User
+            Home</a>
     </div>
     <hr>
 

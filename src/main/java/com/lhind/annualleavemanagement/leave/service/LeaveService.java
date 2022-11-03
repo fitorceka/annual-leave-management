@@ -1,5 +1,18 @@
 package com.lhind.annualleavemanagement.leave.service;
 
+import static com.lhind.annualleavemanagement.util.Constants.MANAGER_ACCEPTED_LEAVE;
+import static com.lhind.annualleavemanagement.util.Constants.MANAGER_REJECTED_LEAVE;
+
+import java.time.Duration;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.lhind.annualleavemanagement.leave.entity.LeaveEntity;
 import com.lhind.annualleavemanagement.leave.repository.LeaveRepository;
 import com.lhind.annualleavemanagement.security.CustomUserDetails;
@@ -8,44 +21,35 @@ import com.lhind.annualleavemanagement.user.repository.UserRepository;
 import com.lhind.annualleavemanagement.user.service.UserService;
 import com.lhind.annualleavemanagement.util.Constants;
 import com.lhind.annualleavemanagement.util.CurrentAuthenticatedUser;
-import com.lhind.annualleavemanagement.util.DateUtils;
 import com.lhind.annualleavemanagement.util.service.EmailService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Duration;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static com.lhind.annualleavemanagement.util.Constants.MANAGER_ACCEPTED_LEAVE;
-import static com.lhind.annualleavemanagement.util.Constants.MANAGER_REJECTED_LEAVE;
 
 @Service
 @Transactional
 public class LeaveService {
 
-    @Autowired
-    private LeaveRepository repository;
+    private final LeaveRepository repository;
+    private final UserService userService;
+    private final UserRepository userRepository;
+    private final EmailService emailService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private EmailService emailService;
-
-    @Transactional(readOnly = true)
-    public LeaveEntity findLeaveById(Long id) throws Exception {
-        return repository.findById(id).orElseThrow(() -> new Exception(Constants.LEAVE_CANNOT_BE_FOUND_BY_ID.replace("leaveId", String.valueOf(id))));
+    public LeaveService(LeaveRepository repository, UserService userService, UserRepository userRepository,
+            EmailService emailService) {
+        this.repository = repository;
+        this.userService = userService;
+        this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     @Transactional(readOnly = true)
-    public List<LeaveEntity> findAllEmployeeLeavesUnderManager() throws Exception {
+    public LeaveEntity findLeaveById(Long id) throws Exception {
+        return repository
+            .findById(id)
+            .orElseThrow(() -> new Exception(Constants.LEAVE_CANNOT_BE_FOUND_BY_ID.replace("leaveId", String.valueOf(id))));
+    }
+
+    @Transactional(readOnly = true)
+    public List<LeaveEntity> findAllEmployeeLeavesUnderManager() {
         CustomUserDetails user = CurrentAuthenticatedUser.getCurrentUser();
         UserEntity manager = userService.findUserById(user.getId());
 
@@ -63,10 +67,14 @@ public class LeaveService {
 
     @Transactional(readOnly = true)
     public List<LeaveEntity> findAllLeavesForAuthenticatedUser() {
-        return Optional.of(CurrentAuthenticatedUser.getCurrentUser()).map(user -> userService.findUserById(user.getId())).orElse(null).getLeaves();
+        return Optional
+            .of(CurrentAuthenticatedUser.getCurrentUser())
+            .map(user -> userService.findUserById(user.getId()))
+            .orElse(null)
+            .getLeaves();
     }
 
-    public void saveLeaveToCurrentlyAuthenticatedUser(LeaveEntity leaveEntity) throws Exception {
+    public void saveLeaveToCurrentlyAuthenticatedUser(LeaveEntity leaveEntity) {
         CustomUserDetails user = CurrentAuthenticatedUser.getCurrentUser();
         UserEntity authenticatedUserEntity = userService.findUserById(user.getId());
 
@@ -74,10 +82,12 @@ public class LeaveService {
             throw new RuntimeException(Constants.AUTHENTICATED_USER_CANNOT_CREATE_AN_LEAVE_REQUEST);
         }
 
-        long noOfDays = Duration.between(leaveEntity.getFromDate().atStartOfDay(), leaveEntity.getToDate().atStartOfDay()).toDays();
+        long noOfDays = Duration
+            .between(leaveEntity.getFromDate().atStartOfDay(), leaveEntity.getToDate().atStartOfDay())
+            .toDays();
         long daysFromHire = authenticatedUserEntity.getDaysFromHire();
 
-        if (leaveEntity.getFromDate().isBefore(DateUtils.fetchDateAndTimeOfCurrentMachine())) {
+        if (leaveEntity.getFromDate().isBefore(LocalDate.now())) {
             throw new RuntimeException(Constants.FROM_DATE_CANNOT_BE_SET_BEFORE_CURRENT_DATE);
         }
 
@@ -96,10 +106,12 @@ public class LeaveService {
         leaveEntity.setUser(authenticatedUserEntity);
         leaveEntity.setStatus(Constants.STATUS_PENDING);
         leaveEntity.setNoOfDays(noOfDays);
-        authenticatedUserEntity.setAnnualLeaveDays((int) (authenticatedUserEntity.getAnnualLeaveDays() - leaveEntity.getNoOfDays()));
+        authenticatedUserEntity
+            .setAnnualLeaveDays((int) (authenticatedUserEntity.getAnnualLeaveDays() - leaveEntity.getNoOfDays()));
         repository.save(leaveEntity);
 
-        emailService.sendMailToManager(leaveEntity.getLeaveReason(), "Employee: " + user.getFullName() + " created new leave request");
+        emailService
+            .sendMailToManager(leaveEntity.getLeaveReason(), "Employee: " + user.getFullName() + " created new leave request");
     }
 
     public void updateLeave(Long leaveId, String leaveReason, LocalDate fromDate, LocalDate toDate) throws Exception {
@@ -112,11 +124,13 @@ public class LeaveService {
         leaveEntity.setLeaveReason(leaveReason);
         leaveEntity.setFromDate(fromDate);
         leaveEntity.setToDate(toDate);
-        leaveEntity.setNoOfDays(Duration.between(leaveEntity.getFromDate().atStartOfDay(), leaveEntity.getToDate().atStartOfDay()).toDays());
+        leaveEntity.setNoOfDays(Duration.between(leaveEntity.getFromDate(), leaveEntity.getToDate()).toDays());
         userEntity.setAnnualLeaveDays((int) (userLeaveDays - leaveEntity.getNoOfDays()));
         repository.save(leaveEntity);
 
-        emailService.sendMailToManager(leaveEntity.getLeaveReason(), "Employee: " + userEntity.getFirstName() + " " + userEntity.getLastName() + " updated a leave request");
+        emailService
+            .sendMailToManager(leaveEntity.getLeaveReason(),
+                "Employee: " + userEntity.getFirstName() + " " + userEntity.getLastName() + " updated a leave request");
     }
 
     public void acceptLeaveRequest(Long leaveId) throws Exception {
@@ -132,7 +146,9 @@ public class LeaveService {
         UserEntity userEntityThatCreatedTheLeave = leaveEntity.getUser();
         leaveEntity.setStatus(Constants.STATUS_ACCEPTED);
 
-        emailService.sendMailToEmployee(userEntityThatCreatedTheLeave, leaveEntity.getLeaveReason(), MANAGER_ACCEPTED_LEAVE.replace("manager", user.getFullName()));
+        emailService
+            .sendMailToEmployee(userEntityThatCreatedTheLeave, leaveEntity.getLeaveReason(),
+                MANAGER_ACCEPTED_LEAVE.replace("manager", user.getFullName()));
     }
 
     public void rejectLeaveRequest(Long leaveId) throws Exception {
@@ -146,10 +162,13 @@ public class LeaveService {
         }
 
         UserEntity userEntityThatCreatedTheLeave = leaveEntity.getUser();
-        userEntityThatCreatedTheLeave.setAnnualLeaveDays((int) (userEntityThatCreatedTheLeave.getAnnualLeaveDays() + leaveEntity.getNoOfDays()));
+        userEntityThatCreatedTheLeave
+            .setAnnualLeaveDays((int) (userEntityThatCreatedTheLeave.getAnnualLeaveDays() + leaveEntity.getNoOfDays()));
         leaveEntity.setStatus(Constants.STATUS_REJECTED);
 
-        emailService.sendMailToEmployee(userEntityThatCreatedTheLeave, leaveEntity.getLeaveReason(), MANAGER_REJECTED_LEAVE.replace("manager", user.getFullName()));
+        emailService
+            .sendMailToEmployee(userEntityThatCreatedTheLeave, leaveEntity.getLeaveReason(),
+                MANAGER_REJECTED_LEAVE.replace("manager", user.getFullName()));
     }
 
     public void deleteLeave(Long id) throws Exception {

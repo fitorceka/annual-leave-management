@@ -1,11 +1,12 @@
 package com.lhind.annualleavemanagement.user.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.lhind.annualleavemanagement.leave.dto.LeaveDto;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDate;
 import java.util.List;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.lhind.annualleavemanagement.leave.dto.LeaveDto;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDto {

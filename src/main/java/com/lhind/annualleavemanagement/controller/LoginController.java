@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class LoginController {
 
-    @GetMapping(value = {"/login", "/"})
+    @GetMapping(value = { "/login", "/" })
     public String showLoginPage() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
+
         if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
             return "login";
         }
-        
+
         return "redirect:/mainApp";
     }
 

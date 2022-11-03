@@ -1,23 +1,21 @@
 package com.lhind.annualleavemanagement.user.mapper;
 
-import com.lhind.annualleavemanagement.config.MapperConfig;
-import com.lhind.annualleavemanagement.user.dto.UserDto;
-import com.lhind.annualleavemanagement.user.entity.UserEntity;
+import javax.validation.constraints.NotNull;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-import javax.validation.constraints.NotNull;
-import java.util.List;
+import com.lhind.annualleavemanagement.config.MapperConfig;
+import com.lhind.annualleavemanagement.leave.mapper.LeaveMapper;
+import com.lhind.annualleavemanagement.user.dto.UserDto;
+import com.lhind.annualleavemanagement.user.entity.UserEntity;
 
-@Mapper(config = MapperConfig.class)
+@Mapper(config = MapperConfig.class, uses = LeaveMapper.class)
 public abstract class UserMapper {
 
     @Mapping(ignore = true, target = "password")
     public abstract UserDto toDto(UserEntity entity);
-
-    @Mapping(ignore = true, target = "password")
-    public abstract List<UserDto> toDtos(List<UserEntity> entities);
 
     public abstract UserEntity toEntity(UserDto dto);
 

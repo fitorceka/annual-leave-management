@@ -1,11 +1,12 @@
 package com.lhind.annualleavemanagement.user.repository;
 
-import com.lhind.annualleavemanagement.user.entity.UserEntity;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.lhind.annualleavemanagement.user.entity.UserEntity;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {

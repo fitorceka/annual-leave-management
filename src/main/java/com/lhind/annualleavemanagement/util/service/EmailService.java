@@ -1,26 +1,26 @@
 package com.lhind.annualleavemanagement.util.service;
 
-import com.lhind.annualleavemanagement.security.CustomUserDetails;
-import com.lhind.annualleavemanagement.user.entity.UserEntity;
-import com.lhind.annualleavemanagement.user.service.UserService;
-import com.lhind.annualleavemanagement.util.Constants;
-import com.lhind.annualleavemanagement.util.CurrentAuthenticatedUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import com.lhind.annualleavemanagement.security.CustomUserDetails;
+import com.lhind.annualleavemanagement.user.entity.UserEntity;
+import com.lhind.annualleavemanagement.user.service.UserService;
+import com.lhind.annualleavemanagement.util.Constants;
+import com.lhind.annualleavemanagement.util.CurrentAuthenticatedUser;
+
 @Service
 public class EmailService {
 
-    @Autowired
     private final JavaMailSender javaMailSender;
+    private final UserService userService;
 
     @Autowired
-    private UserService userService;
-
-    public EmailService(JavaMailSender javaMailSender) {
+    public EmailService(JavaMailSender javaMailSender, UserService userService) {
         this.javaMailSender = javaMailSender;
+        this.userService = userService;
     }
 
     public void sendMailToManager(String subject, String message) {
@@ -37,7 +37,7 @@ public class EmailService {
         simpleMailMessage.setText(message);
 
         simpleMailMessage.setFrom(userEntity.getEmail());
-        
+
         try {
             javaMailSender.send(simpleMailMessage);
         } catch (Exception e) {

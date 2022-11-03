@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
     <title>Save Leave</title>
 
@@ -42,13 +43,17 @@
             </select>
         </label>
 
-        <input id="from-date" type="date" th:field="*{fromDate}" class="center-block form-control mb-4 col-4" placeholder="From Date" required/>
-        <input id="to-date" type="date" th:field="*{toDate}" class="center-block form-control mb-4 col-4" placeholder="To Date" required/>
+        <input id="from-date" type="date" th:field="*{fromDate}" class="center-block form-control mb-4 col-4"
+               placeholder="From Date" required/>
+        <input id="to-date" type="date" th:field="*{toDate}" class="center-block form-control mb-4 col-4"
+               placeholder="To Date" required/>
         <p id="date-error" style="color: red"></p>
 
         <hr>
 
-        <button th:disabled="${user.daysFromHire < 90 || user.annualLeaveDays < 1}" id="save-leave" type="submit" class="btn btn-info col-2" onclick="return validateDates()">Save Leave</button>
+        <button th:disabled="${user.daysFromHire < 90 || user.annualLeaveDays < 1}" id="save-leave" type="submit"
+                class="btn btn-info col-2" onclick="return validateDates()">Save Leave
+        </button>
     </form>
 
     <hr>
@@ -62,12 +67,12 @@
         let toDate = new Date(document.getElementById("to-date").value);
         let form = document.getElementById("register-leave");
         let dateError = document.getElementById("date-error");
-        let today = new Date().setHours(0,0,0,0);
+        let today = new Date().setHours(0, 0, 0, 0);
 
         form.addEventListener('submit', (e) => {
             let message;
 
-            if(fromDate <= today || toDate <= fromDate) {
+            if (fromDate <= today || toDate <= fromDate) {
                 message = "From Date is before Current Date or To Date is before From Date"
             }
 

@@ -1,9 +1,10 @@
 package com.lhind.annualleavemanagement.controller;
 
-import com.lhind.annualleavemanagement.user.dto.UserDto;
-import com.lhind.annualleavemanagement.user.mapper.UserMapper;
-import com.lhind.annualleavemanagement.user.service.UserService;
-import com.lhind.annualleavemanagement.util.Constants;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -13,22 +14,27 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.Valid;
-import java.util.List;
+import com.lhind.annualleavemanagement.user.dto.UserDto;
+import com.lhind.annualleavemanagement.user.mapper.UserMapper;
+import com.lhind.annualleavemanagement.user.service.UserService;
+import com.lhind.annualleavemanagement.util.Constants;
 
 @Controller
 @PreAuthorize(Constants.ROLE_ADMIN)
 public class AdminController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final UserMapper userMapper;
 
     @Autowired
-    private UserMapper userMapper;
+    public AdminController(UserService userService, UserMapper userMapper) {
+        this.userService = userService;
+        this.userMapper = userMapper;
+    }
 
     @GetMapping("/admin/users")
     public String getAllUsers(Model model) {
-        List<UserDto> allUsers = userMapper.toDtos(userService.findAllUsers());
+        List<UserDto> allUsers = userService.findAllUsers().stream().map(userMapper::toDto).collect(Collectors.toList());
 
         model.addAttribute("allUsers", allUsers);
 
@@ -61,16 +67,16 @@ public class AdminController {
     }
 
     @PostMapping("/admin/updateUser")
-    public String updateUser(@ModelAttribute("user") @Valid UserDto user, @RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName
-            , @RequestParam("email") String email, @RequestParam("username") String username
-            , @RequestParam("role") String role) throws Exception {
+    public String updateUser(@ModelAttribute("user") @Valid UserDto user, @RequestParam("firstName") String firstName,
+            @RequestParam("lastName") String lastName, @RequestParam("email") String email,
+            @RequestParam("username") String username, @RequestParam("role") String role) {
         userService.updateUser(user.getUserId(), firstName, lastName, email, username, role);
 
         return "redirect:/admin/users";
     }
 
     @GetMapping("/admin/deleteUser")
-    public String deleteUser(@RequestParam("userId") Long id) throws Exception {
+    public String deleteUser(@RequestParam("userId") Long id) {
         userService.deleteUser(id);
 
         return "redirect:/admin/users";
@@ -86,7 +92,8 @@ public class AdminController {
     }
 
     @PostMapping("/admin/changePassword")
-    public String changePassword(@ModelAttribute("user") @Valid UserDto user, @RequestParam("oldPassword") String oldPassword, @RequestParam("newPassword") String newPassword) throws Exception {
+    public String changePassword(@ModelAttribute("user") @Valid UserDto user, @RequestParam("oldPassword") String oldPassword,
+            @RequestParam("newPassword") String newPassword) {
         userService.changePassword(user.getUserId(), oldPassword, newPassword);
 
         return "redirect:/admin/users";
@@ -96,7 +103,7 @@ public class AdminController {
     public String showSelectManager(@RequestParam("userId") Long userId, Model model) {
         UserDto user = userMapper.toDto(userService.findUserById(userId));
 
-        List<UserDto> managers = userMapper.toDtos(userService.findAllManagers());
+        List<UserDto> managers = userService.findAllManagers().stream().map(userMapper::toDto).collect(Collectors.toList());
 
         model.addAttribute("user", user);
         model.addAttribute("managers", managers);
@@ -105,7 +112,8 @@ public class AdminController {
     }
 
     @PostMapping("/admin/setManager")
-    public String setManagerForUser(@ModelAttribute("user") @Valid UserDto user, @RequestParam("managerEmail") String managerEmail) throws Exception {
+    public String setManagerForUser(@ModelAttribute("user") @Valid UserDto user,
+            @RequestParam("managerEmail") String managerEmail) {
         userService.setManager(user.getUserId(), managerEmail);
 
         return "redirect:/admin/users";

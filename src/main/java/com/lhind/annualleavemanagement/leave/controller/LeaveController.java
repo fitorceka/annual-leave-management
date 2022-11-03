@@ -1,13 +1,11 @@
 package com.lhind.annualleavemanagement.leave.controller;
 
-import com.lhind.annualleavemanagement.leave.dto.LeaveDto;
-import com.lhind.annualleavemanagement.leave.mapper.LeaveMapper;
-import com.lhind.annualleavemanagement.leave.service.LeaveService;
-import com.lhind.annualleavemanagement.security.CustomUserDetails;
-import com.lhind.annualleavemanagement.user.dto.UserDto;
-import com.lhind.annualleavemanagement.user.mapper.UserMapper;
-import com.lhind.annualleavemanagement.user.service.UserService;
-import com.lhind.annualleavemanagement.util.CurrentAuthenticatedUser;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -17,28 +15,38 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.List;
+import com.lhind.annualleavemanagement.leave.dto.LeaveDto;
+import com.lhind.annualleavemanagement.leave.mapper.LeaveMapper;
+import com.lhind.annualleavemanagement.leave.service.LeaveService;
+import com.lhind.annualleavemanagement.security.CustomUserDetails;
+import com.lhind.annualleavemanagement.user.dto.UserDto;
+import com.lhind.annualleavemanagement.user.mapper.UserMapper;
+import com.lhind.annualleavemanagement.user.service.UserService;
+import com.lhind.annualleavemanagement.util.CurrentAuthenticatedUser;
 
 @Controller
 public class LeaveController {
 
-    @Autowired
-    private LeaveService leaveService;
+    private final LeaveService leaveService;
+    private final UserService userService;
+    private final LeaveMapper mapper;
+    private final UserMapper userMapper;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private LeaveMapper mapper;
-
-    @Autowired
-    private UserMapper userMapper;
+    public LeaveController(LeaveService leaveService, UserService userService, LeaveMapper mapper, UserMapper userMapper) {
+        this.leaveService = leaveService;
+        this.userService = userService;
+        this.mapper = mapper;
+        this.userMapper = userMapper;
+    }
 
     @GetMapping("/manager/manageAllEmployeeLeavesUnderManager")
     public String showAllEmployeeLeavesUnderManager(Model model) throws Exception {
-        List<LeaveDto> allEmployeeLeavesUnderManager = mapper.toDtos(leaveService.findAllEmployeeLeavesUnderManager());
+        List<LeaveDto> allEmployeeLeavesUnderManager = leaveService
+            .findAllEmployeeLeavesUnderManager()
+            .stream()
+            .map(mapper::toDto)
+            .collect(Collectors.toList());
 
         model.addAttribute("allEmployeesLeavesUnderManager", allEmployeeLeavesUnderManager);
 
@@ -75,8 +83,9 @@ public class LeaveController {
     }
 
     @PostMapping("/user/updateLeave")
-    public String updateLeave(@ModelAttribute("leave") @Valid LeaveDto dto, @RequestParam("leaveReason") String leaveReason, @RequestParam("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate
-            , @RequestParam("toDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) throws Exception {
+    public String updateLeave(@ModelAttribute("leave") @Valid LeaveDto dto, @RequestParam("leaveReason") String leaveReason,
+            @RequestParam("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+            @RequestParam("toDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) throws Exception {
         leaveService.updateLeave(dto.getLeaveId(), leaveReason, fromDate, toDate);
 
         return "redirect:/user/manageMyLeaves";

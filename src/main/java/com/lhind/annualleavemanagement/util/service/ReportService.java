@@ -6,12 +6,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ReportService {
-    private XSSFWorkbook workbook;
-    private XSSFSheet sheet;
-    
+    private final XSSFWorkbook workbook;
+    private final XSSFSheet sheet;
+
     public ReportService() {
         workbook = new XSSFWorkbook();
+        sheet = null;
     }
-    
-    
+
 }

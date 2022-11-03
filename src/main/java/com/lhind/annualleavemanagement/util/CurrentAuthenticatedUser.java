@@ -1,8 +1,9 @@
 package com.lhind.annualleavemanagement.util;
 
-import com.lhind.annualleavemanagement.security.CustomUserDetails;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import com.lhind.annualleavemanagement.security.CustomUserDetails;
 
 public class CurrentAuthenticatedUser {
 

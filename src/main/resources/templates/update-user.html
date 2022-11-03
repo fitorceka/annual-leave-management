@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
     <title>Update User</title>
 
@@ -31,16 +32,20 @@
         <input hidden="hidden" th:field="*{userId}">
 
         <label>First Name</label>
-        <input type="text" th:name="firstName" th:field="*{firstName}" class="center-block form-control mb-4 col-4" placeholder="First Name"/>
+        <input type="text" th:name="firstName" th:field="*{firstName}" class="center-block form-control mb-4 col-4"
+               placeholder="First Name"/>
 
         <label>Last Name</label>
-        <input type="text" th:name="lastName" th:field="*{lastName}" class="center-block form-control mb-4 col-4" placeholder="Last Name"/>
+        <input type="text" th:name="lastName" th:field="*{lastName}" class="center-block form-control mb-4 col-4"
+               placeholder="Last Name"/>
 
         <label>Email</label>
-        <input type="email" th:name="email" th:field="*{email}" class="center-block form-control mb-4 col-4" placeholder="Email"/>
+        <input type="email" th:name="email" th:field="*{email}" class="center-block form-control mb-4 col-4"
+               placeholder="Email"/>
 
         <label>Username</label>
-        <input type="text" th:name="username" th:field="*{username}" class="center-block form-control mb-4 col-4" placeholder="Username"/>
+        <input type="text" th:name="username" th:field="*{username}" class="center-block form-control mb-4 col-4"
+               placeholder="Username"/>
 
         <label style="color: black">ROLE:</label>
         <select th:field="*{role}" th:name="role">

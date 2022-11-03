@@ -1,5 +1,15 @@
 package com.lhind.annualleavemanagement.user.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.lhind.annualleavemanagement.leave.dto.LeaveDto;
 import com.lhind.annualleavemanagement.leave.mapper.LeaveMapper;
 import com.lhind.annualleavemanagement.leave.service.LeaveService;
@@ -8,29 +18,22 @@ import com.lhind.annualleavemanagement.user.dto.UserDto;
 import com.lhind.annualleavemanagement.user.mapper.UserMapper;
 import com.lhind.annualleavemanagement.user.service.UserService;
 import com.lhind.annualleavemanagement.util.CurrentAuthenticatedUser;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @Controller
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final LeaveService leaveService;
+    private final UserMapper mapper;
+    private final LeaveMapper leaveMapper;
 
     @Autowired
-    private LeaveService leaveService;
-
-    @Autowired
-    private UserMapper mapper;
-
-    @Autowired
-    private LeaveMapper leaveMapper;
+    public UserController(UserService userService, LeaveService leaveService, UserMapper mapper, LeaveMapper leaveMapper) {
+        this.userService = userService;
+        this.leaveService = leaveService;
+        this.mapper = mapper;
+        this.leaveMapper = leaveMapper;
+    }
 
     @GetMapping("/manager/managerHome")
     public String showHomeForManagers() {
@@ -38,8 +41,12 @@ public class UserController {
     }
 
     @GetMapping("/manager/showUsersUnderManager")
-    public String showUsersUnderManager(Model model) throws Exception {
-        List<UserDto> usersUnderCurrentManager = mapper.toDtos(userService.findAllUsersUnderCurrentManager());
+    public String showUsersUnderManager(Model model) {
+        List<UserDto> usersUnderCurrentManager = userService
+            .findAllUsersUnderCurrentManager()
+            .stream()
+            .map(mapper::toDto)
+            .collect(Collectors.toList());
 
         model.addAttribute("usersUnderCurrentManager", usersUnderCurrentManager);
 
@@ -52,11 +59,15 @@ public class UserController {
     }
 
     @GetMapping("/user/manageMyLeaves")
-    public String manageMyLeaves(Model model) throws Exception {
+    public String manageMyLeaves(Model model) {
         CustomUserDetails currentAuthenticatedUser = CurrentAuthenticatedUser.getCurrentUser();
         UserDto user = mapper.toDto(userService.findUserById(currentAuthenticatedUser.getId()));
 
-        List<LeaveDto> leaves = leaveMapper.toDtos(leaveService.findAllLeavesForAuthenticatedUser());
+        List<LeaveDto> leaves = leaveService
+            .findAllLeavesForAuthenticatedUser()
+            .stream()
+            .map(leaveMapper::toDto)
+            .collect(Collectors.toList());
 
         model.addAttribute("leaves", leaves);
         model.addAttribute("currentUser", user);
@@ -70,7 +81,8 @@ public class UserController {
     }
 
     @PostMapping("/changePassword")
-    public String changeCurrentUserPassword(@RequestParam("oldPassword") String oldPassword, @RequestParam("newPassword") String newPassword) throws Exception {
+    public String changeCurrentUserPassword(@RequestParam("oldPassword") String oldPassword,
+            @RequestParam("newPassword") String newPassword) {
         userService.changePasswordForAuthenticatedUser(oldPassword, newPassword);
 
         return "redirect:/mainApp";

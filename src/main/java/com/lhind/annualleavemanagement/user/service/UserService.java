@@ -1,13 +1,9 @@
 package com.lhind.annualleavemanagement.user.service;
 
-import com.lhind.annualleavemanagement.leave.entity.LeaveEntity;
-import com.lhind.annualleavemanagement.user.entity.UserEntity;
-import com.lhind.annualleavemanagement.leave.repository.LeaveRepository;
-import com.lhind.annualleavemanagement.user.repository.UserRepository;
-import com.lhind.annualleavemanagement.security.CustomUserDetails;
-import com.lhind.annualleavemanagement.util.Constants;
-import com.lhind.annualleavemanagement.util.CurrentAuthenticatedUser;
-import com.lhind.annualleavemanagement.util.DateUtils;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,8 +12,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
-import java.util.List;
+import com.lhind.annualleavemanagement.leave.entity.LeaveEntity;
+import com.lhind.annualleavemanagement.leave.repository.LeaveRepository;
+import com.lhind.annualleavemanagement.security.CustomUserDetails;
+import com.lhind.annualleavemanagement.user.entity.UserEntity;
+import com.lhind.annualleavemanagement.user.repository.UserRepository;
+import com.lhind.annualleavemanagement.util.Constants;
+import com.lhind.annualleavemanagement.util.CurrentAuthenticatedUser;
 
 @Service
 @Transactional
@@ -25,10 +26,8 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private LeaveRepository leaveRepository;
-
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -54,22 +53,24 @@ public class UserService implements UserDetailsService {
 
     @Transactional(readOnly = true)
     public UserEntity findUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new RuntimeException(Constants.USER_CANNOT_BE_FOUND_BY_ID.replace("userId", String.valueOf(id))));
+        return userRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new RuntimeException(Constants.USER_CANNOT_BE_FOUND_BY_ID.replace("userId", String.valueOf(id))));
     }
 
     public void saveUser(UserEntity userEntity) {
-        if (userEntity.getHireDate().atStartOfDay().toLocalDate().isAfter(DateUtils.fetchDateAndTimeOfCurrentMachine())) {
+        if (userEntity.getHireDate().isAfter(LocalDate.now())) {
             throw new RuntimeException(Constants.HIRE_DATE_CANNOT_BE_SET_AFTER_CURRENT_DATE);
         }
 
-        long daysFromHire = Duration.between(userEntity.getHireDate().atStartOfDay(), DateUtils.fetchDateOfCurrentMachine()).toDays();
+        long daysFromHire = Duration.between(userEntity.getHireDate(), LocalDate.now()).toDays();
 
         userEntity.setDaysFromHire(daysFromHire);
 
         if (daysFromHire >= 90) {
             userEntity.setAnnualLeaveDays(20);
-        }
-        else {
+        } else {
             userEntity.setAnnualLeaveDays(0);
         }
 
@@ -77,9 +78,8 @@ public class UserService implements UserDetailsService {
         userRepository.save(userEntity);
     }
 
-    public void updateUser(Long userId, String firstName, String lastName, String email, String userName, String role) throws Exception {
+    public void updateUser(Long userId, String firstName, String lastName, String email, String userName, String role) {
         UserEntity userEntity = findUserById(userId);
-
 
         userEntity.setFirstName(firstName);
         userEntity.setLastName(lastName);
@@ -90,7 +90,7 @@ public class UserService implements UserDetailsService {
         userRepository.save(userEntity);
     }
 
-    public void deleteUser(Long id) throws Exception {
+    public void deleteUser(Long id) {
         UserEntity userEntity = findUserById(id);
 
         if (userEntity.getRole().equals(Constants.ROLE_MANAGER)) {
@@ -111,7 +111,7 @@ public class UserService implements UserDetailsService {
         userRepository.delete(userEntity);
     }
 
-    public void changePassword(Long id, String oldPassword, String newPassword) throws Exception {
+    public void changePassword(Long id, String oldPassword, String newPassword) {
         UserEntity userEntity = findUserById(id);
 
         if (!bCryptPasswordEncoder.matches(oldPassword, userEntity.getPassword())) {
@@ -121,11 +121,11 @@ public class UserService implements UserDetailsService {
         userRepository.save(userEntity);
     }
 
-    public void setManager(Long userId, String managerEmail) throws Exception {
+    public void setManager(Long userId, String managerEmail) {
         UserEntity userEntity = findUserById(userId);
         UserEntity manager = userRepository.findUserByEmail(managerEmail);
 
-        if (!manager.getRole().equals(Constants.ROLE_MANAGER)){
+        if (!manager.getRole().equals(Constants.ROLE_MANAGER)) {
             throw new RuntimeException(Constants.USER_NOT_MANAGER);
         }
 
@@ -133,7 +133,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserEntity> findAllUsersUnderCurrentManager() throws Exception {
+    public List<UserEntity> findAllUsersUnderCurrentManager() {
         CustomUserDetails user = CurrentAuthenticatedUser.getCurrentUser();
         UserEntity manager = findUserById(user.getId());
 
@@ -144,7 +144,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findAllUsersUnderManager(manager.getUserId());
     }
 
-    public void changePasswordForAuthenticatedUser(String oldPassword, String newPassword) throws Exception {
+    public void changePasswordForAuthenticatedUser(String oldPassword, String newPassword) {
         CustomUserDetails user = CurrentAuthenticatedUser.getCurrentUser();
         UserEntity authenticatedUserEntity = findUserById(user.getId());
 

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:text-align="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <!-- Required meta tags -->
@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
 
     <title>Save User</title>
@@ -30,17 +31,19 @@
 
         <input hidden="hidden" th:field="*{userId}">
 
-        <input type="text" th:field="*{firstName}" class="center-block form-control mb-4 col-4" placeholder="First Name"/>
+        <input type="text" th:field="*{firstName}" class="center-block form-control mb-4 col-4"
+               placeholder="First Name"/>
         <input type="text" th:field="*{lastName}" class="center-block form-control mb-4 col-4" placeholder="Last Name"/>
         <input type="email" th:field="*{email}" class="center-block form-control mb-4 col-4" placeholder="Email"/>
-        <input type="password" th:field="*{password}" class="center-block form-control mb-4 col-4" placeholder="Password"/>
+        <input type="password" th:field="*{password}" class="center-block form-control mb-4 col-4"
+               placeholder="Password"/>
         <input type="text" th:field="*{username}" class="center-block form-control mb-4 col-4" placeholder="Username"/>
         <input type="date" th:field="*{hireDate}" class="center-block form-control mb-4 col-4" placeholder="Hire Date"/>
         <label style="color: black">ROLE:</label>
         <select th:field="*{role}">
-                <option value=""></option>
-                <option value="MANAGER">MANAGER</option>
-                <option value="EMPLOYEE">EMPLOYEE</option>
+            <option value=""></option>
+            <option value="MANAGER">MANAGER</option>
+            <option value="EMPLOYEE">EMPLOYEE</option>
         </select>
         <hr>
         <button type="submit" class="btn btn-info col-2">Save</button>

@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
     <title>Select Manager</title>
 
@@ -34,7 +35,7 @@
     <form action="#" th:action="@{/admin/setManager}" th:object="${user}" method="post">
         <input hidden="hidden" th:field="*{userId}">
 
-<!--        <input type="email" th:name="managerEmail" class="form-control mb-4 col-4" placeholder="Manager Email"/>-->
+        <!--        <input type="email" th:name="managerEmail" class="form-control mb-4 col-4" placeholder="Manager Email"/>-->
         <select th:name="managerEmail" class="center-block">
             <optgroup th:each="manager:${managers}">
                 <option th:text="${manager.email}"></option>
