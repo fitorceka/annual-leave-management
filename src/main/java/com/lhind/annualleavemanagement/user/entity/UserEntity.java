@@ -164,4 +164,8 @@ public class UserEntity {
     public void setLeaves(List<LeaveEntity> leaves) {
         this.leaves = leaves;
     }
+
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 }
