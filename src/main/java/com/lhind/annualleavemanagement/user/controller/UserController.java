@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.lhind.annualleavemanagement.leave.dto.LeaveDto;
 import com.lhind.annualleavemanagement.leave.mapper.LeaveMapper;
+import com.lhind.annualleavemanagement.leave.mapper.LeaveMapperContext;
 import com.lhind.annualleavemanagement.leave.service.LeaveService;
 import com.lhind.annualleavemanagement.security.CustomUserDetails;
 import com.lhind.annualleavemanagement.user.dto.UserDto;
 import com.lhind.annualleavemanagement.user.mapper.UserMapper;
+import com.lhind.annualleavemanagement.user.mapper.UserMapperContext;
 import com.lhind.annualleavemanagement.user.service.UserService;
 import com.lhind.annualleavemanagement.util.CurrentAuthenticatedUser;
 
@@ -45,7 +47,7 @@ public class UserController {
         List<UserDto> usersUnderCurrentManager = userService
             .findAllUsersUnderCurrentManager()
             .stream()
-            .map(mapper::toDto)
+            .map(entity -> mapper.toDto(entity, new UserMapperContext()))
             .collect(Collectors.toList());
 
         model.addAttribute("usersUnderCurrentManager", usersUnderCurrentManager);
@@ -61,12 +63,12 @@ public class UserController {
     @GetMapping("/user/manageMyLeaves")
     public String manageMyLeaves(Model model) {
         CustomUserDetails currentAuthenticatedUser = CurrentAuthenticatedUser.getCurrentUser();
-        UserDto user = mapper.toDto(userService.findUserById(currentAuthenticatedUser.getId()));
+        UserDto user = mapper.toDto(userService.findUserById(currentAuthenticatedUser.getId()), new UserMapperContext());
 
         List<LeaveDto> leaves = leaveService
             .findAllLeavesForAuthenticatedUser()
             .stream()
-            .map(leaveMapper::toDto)
+            .map(e -> leaveMapper.toDto(e, new LeaveMapperContext()))
             .collect(Collectors.toList());
 
         model.addAttribute("leaves", leaves);

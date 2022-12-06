@@ -64,7 +64,7 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException(Constants.HIRE_DATE_CANNOT_BE_SET_AFTER_CURRENT_DATE);
         }
 
-        long daysFromHire = Duration.between(userEntity.getHireDate(), LocalDate.now()).toDays();
+        long daysFromHire = Duration.between(userEntity.getHireDate().atStartOfDay(), LocalDate.now().atStartOfDay()).toDays();
 
         userEntity.setDaysFromHire(daysFromHire);
 

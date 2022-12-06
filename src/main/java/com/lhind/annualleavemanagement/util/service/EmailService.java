@@ -1,5 +1,6 @@
 package com.lhind.annualleavemanagement.util.service;
 
+import com.lhind.annualleavemanagement.util.HasLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -11,8 +12,10 @@ import com.lhind.annualleavemanagement.user.service.UserService;
 import com.lhind.annualleavemanagement.util.Constants;
 import com.lhind.annualleavemanagement.util.CurrentAuthenticatedUser;
 
+import java.util.concurrent.CompletableFuture;
+
 @Service
-public class EmailService {
+public class EmailService implements HasLogger {
 
     private final JavaMailSender javaMailSender;
     private final UserService userService;
@@ -39,9 +42,10 @@ public class EmailService {
         simpleMailMessage.setFrom(userEntity.getEmail());
 
         try {
+            getLogger().info("Sending Email to {}", userEntity.getManager().getFirstName());
             javaMailSender.send(simpleMailMessage);
         } catch (Exception e) {
-            System.out.println("Cannot send email");
+            getLogger().error("Cannot send email");
         }
     }
 
@@ -62,9 +66,10 @@ public class EmailService {
         simpleMailMessage.setFrom(userEntity.getEmail());
 
         try {
+            getLogger().info("Sending Email to {}", employee.getFirstName());
             javaMailSender.send(simpleMailMessage);
         } catch (Exception e) {
-            System.out.println("Cannot send email");
+            getLogger().error("Cannot send email");
         }
     }
 }

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.lhind.annualleavemanagement.user.dto.UserDto;
 import com.lhind.annualleavemanagement.user.mapper.UserMapper;
+import com.lhind.annualleavemanagement.user.mapper.UserMapperContext;
 import com.lhind.annualleavemanagement.user.service.UserService;
 import com.lhind.annualleavemanagement.util.Constants;
 
@@ -27,14 +29,18 @@ public class AdminController {
     private final UserMapper userMapper;
 
     @Autowired
-    public AdminController(UserService userService, UserMapper userMapper) {
+    public AdminController(UserService userService, @Lazy UserMapper userMapper) {
         this.userService = userService;
         this.userMapper = userMapper;
     }
 
     @GetMapping("/admin/users")
     public String getAllUsers(Model model) {
-        List<UserDto> allUsers = userService.findAllUsers().stream().map(userMapper::toDto).collect(Collectors.toList());
+        List<UserDto> allUsers = userService
+            .findAllUsers()
+            .stream()
+            .map(entity -> userMapper.toDto(entity, new UserMapperContext()))
+            .collect(Collectors.toList());
 
         model.addAttribute("allUsers", allUsers);
 
@@ -52,14 +58,14 @@ public class AdminController {
 
     @PostMapping("/admin/saveUser")
     public String saveUser(@ModelAttribute("user") @Valid UserDto dto) {
-        userService.saveUser(userMapper.toEntity(dto));
+        userService.saveUser(userMapper.toEntity(dto, new UserMapperContext()));
 
         return "redirect:/admin/users";
     }
 
     @GetMapping("/admin/showUserFormForUpdate")
     public String showUserFormForUpdate(@RequestParam("userId") Long id, Model model) {
-        UserDto user = userMapper.toDto(userService.findUserById(id));
+        UserDto user = userMapper.toDto(userService.findUserById(id), new UserMapperContext());
 
         model.addAttribute("user", user);
 
@@ -84,7 +90,7 @@ public class AdminController {
 
     @GetMapping("/admin/showUserFormForUpdatePassword")
     public String showUserFormForUpdatePassword(@RequestParam("userId") Long id, Model model) {
-        UserDto user = userMapper.toDto(userService.findUserById(id));
+        UserDto user = userMapper.toDto(userService.findUserById(id), new UserMapperContext());
 
         model.addAttribute("user", user);
 
@@ -101,9 +107,13 @@ public class AdminController {
 
     @GetMapping("/admin/showSelectManager")
     public String showSelectManager(@RequestParam("userId") Long userId, Model model) {
-        UserDto user = userMapper.toDto(userService.findUserById(userId));
+        UserDto user = userMapper.toDto(userService.findUserById(userId), new UserMapperContext());
 
-        List<UserDto> managers = userService.findAllManagers().stream().map(userMapper::toDto).collect(Collectors.toList());
+        List<UserDto> managers = userService
+            .findAllManagers()
+            .stream()
+            .map(entity -> userMapper.toDto(entity, new UserMapperContext()))
+            .collect(Collectors.toList());
 
         model.addAttribute("user", user);
         model.addAttribute("managers", managers);

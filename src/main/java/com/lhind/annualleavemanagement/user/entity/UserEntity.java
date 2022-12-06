@@ -22,48 +22,48 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lhind.annualleavemanagement.leave.entity.LeaveEntity;
 
 @Entity
-@Table(name = "users")
+@Table(name = "USERS")
 public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "users_id")
+    @Column(name = "USER_ID")
     private Long userId;
 
-    @Column(name = "first_name", nullable = false)
+    @Column(name = "FIRST_NAME", nullable = false)
     @Size(min = 3, max = 15)
     private String firstName;
 
     @Size(min = 3, max = 15)
-    @Column(name = "last_name", nullable = false)
+    @Column(name = "LAST_NAME", nullable = false)
     private String lastName;
 
-    @Column(name = "email", unique = true)
+    @Column(name = "EMAIL", unique = true)
     @Email(message = "Email cannot be empty")
     private String email;
 
-    @Column(name = "username", unique = true)
+    @Column(name = "USERNAME", unique = true)
     private String username;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "PASSWORD", nullable = false)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    @Column(name = "annual_leave_days", nullable = false)
+    @Column(name = "ANNUAL_LEAVE_DAYS", nullable = false)
     private int annualLeaveDays;
 
-    @Column(name = "role", nullable = false)
+    @Column(name = "ROLE", nullable = false)
     private String role;
 
-    @Column(name = "hire_date", nullable = false)
+    @Column(name = "HIRE_DATE", nullable = false)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate hireDate;
 
-    @Column(name = "days_from_hire", nullable = false)
+    @Column(name = "DAYS_FROM_HIRE", nullable = false)
     private long daysFromHire;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "manager_id")
+    @JoinColumn(name = "MANAGER_ID")
     private UserEntity manager;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)

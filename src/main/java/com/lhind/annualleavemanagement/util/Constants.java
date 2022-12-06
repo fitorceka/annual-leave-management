@@ -28,6 +28,9 @@ public class Constants {
 
     public static final String OLD_PASSWORD_DOES_NOT_MATCH = "Old password does not match";
 
-    public static final String MANAGER_REJECTED_LEAVE = "Your manager: manager rejected your leave request";
-    public static final String MANAGER_ACCEPTED_LEAVE = "Your manager: manager accepted your leave request";
+    public static final String MANAGER_REJECTED_LEAVE = "Your manager: %s rejected your leave request";
+    public static final String MANAGER_ACCEPTED_LEAVE = "Your manager: %s accepted your leave request";
+    
+    public static final String USER_CREATED_LEAVE = "Employee: %s created new leave request.";
+    public static final String USER_UPDATED_LEAVE = "Employee: %s %s updated a leave request";
 }

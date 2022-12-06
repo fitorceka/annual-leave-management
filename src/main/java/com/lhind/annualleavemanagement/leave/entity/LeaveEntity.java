@@ -17,34 +17,34 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lhind.annualleavemanagement.user.entity.UserEntity;
 
 @Entity
-@Table(name = "leaves")
+@Table(name = "LEAVES")
 public class LeaveEntity {
 
     @Id
-    @Column(name = "leave_id")
+    @Column(name = "LEAVE_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long leaveId;
 
-    @Column(name = "leave_reason", nullable = false, length = 3)
+    @Column(name = "LEAVE_REASON", nullable = false)
     private String leaveReason;
 
-    @Column(name = "from_date", nullable = false)
+    @Column(name = "FROM_DATE", nullable = false)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate fromDate;
 
-    @Column(name = "to_date", nullable = false)
+    @Column(name = "TO_DATE", nullable = false)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate toDate;
 
-    @Column(name = "number_of_days")
+    @Column(name = "NUMBER_OF_DAYS")
     private Long noOfDays;
 
-    @Column(name = "status")
+    @Column(name = "STATUS")
     private String status;
 
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "users_id")
+    @JoinColumn(name = "USER_ID")
     private UserEntity user;
 
     public Long getLeaveId() {
