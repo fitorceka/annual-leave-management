@@ -16,7 +16,7 @@ public class LeaveDto {
     private LocalDate fromDate;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate toDate;
-    private Long noOfDays;
+    private int noOfDays;
     private String status;
     private UserDto user;
 
@@ -52,11 +52,11 @@ public class LeaveDto {
         this.toDate = toDate;
     }
 
-    public Long getNoOfDays() {
+    public int getNoOfDays() {
         return noOfDays;
     }
 
-    public void setNoOfDays(Long noOfDays) {
+    public void setNoOfDays(int noOfDays) {
         this.noOfDays = noOfDays;
     }
 

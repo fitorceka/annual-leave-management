@@ -21,7 +21,7 @@ public class UserDto {
     private String role;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate hireDate;
-    private long daysFromHire;
+    private int daysFromHire;
     private UserDto manager;
     private List<LeaveDto> leaves;
 
@@ -97,11 +97,11 @@ public class UserDto {
         this.hireDate = hireDate;
     }
 
-    public long getDaysFromHire() {
+    public int getDaysFromHire() {
         return daysFromHire;
     }
 
-    public void setDaysFromHire(long daysFromHire) {
+    public void setDaysFromHire(int daysFromHire) {
         this.daysFromHire = daysFromHire;
     }
 

@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -25,7 +26,8 @@ public class LeaveEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long leaveId;
 
-    @Column(name = "LEAVE_REASON", nullable = false)
+    @Size(max = 20)
+    @Column(name = "LEAVE_REASON", nullable = false, length = 20)
     private String leaveReason;
 
     @Column(name = "FROM_DATE", nullable = false)
@@ -37,7 +39,7 @@ public class LeaveEntity {
     private LocalDate toDate;
 
     @Column(name = "NUMBER_OF_DAYS")
-    private Long noOfDays;
+    private int noOfDays;
 
     @Column(name = "STATUS")
     private String status;
@@ -79,11 +81,11 @@ public class LeaveEntity {
         this.toDate = toDate;
     }
 
-    public Long getNoOfDays() {
+    public int getNoOfDays() {
         return noOfDays;
     }
 
-    public void setNoOfDays(Long noOfDays) {
+    public void setNoOfDays(int noOfDays) {
         this.noOfDays = noOfDays;
     }
 

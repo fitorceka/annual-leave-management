@@ -64,7 +64,9 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException(Constants.HIRE_DATE_CANNOT_BE_SET_AFTER_CURRENT_DATE);
         }
 
-        long daysFromHire = Duration.between(userEntity.getHireDate().atStartOfDay(), LocalDate.now().atStartOfDay()).toDays();
+        int daysFromHire = (int) Duration
+            .between(userEntity.getHireDate().atStartOfDay(), LocalDate.now().atStartOfDay())
+            .toDays();
 
         userEntity.setDaysFromHire(daysFromHire);
 
@@ -74,7 +76,6 @@ public class UserService implements UserDetailsService {
             userEntity.setAnnualLeaveDays(0);
         }
 
-        userEntity.setPassword(bCryptPasswordEncoder.encode(userEntity.getPassword()));
         userRepository.save(userEntity);
     }
 
@@ -95,18 +96,19 @@ public class UserService implements UserDetailsService {
 
         if (userEntity.getRole().equals(Constants.ROLE_MANAGER)) {
             List<UserEntity> userEntities = userRepository.findAllUsersUnderManager(userEntity.getUserId());
-            for (UserEntity userEntity1 : userEntities) {
-                userEntity1.setManager(null);
-                userRepository.save(userEntity1);
-            }
+            userEntities.forEach(user -> {
+                user.setManager(null);
+                userRepository.save(user);
+            });
         }
         userEntity.setManager(null);
         List<LeaveEntity> leaves = userEntity.getLeaves();
 
-        for (LeaveEntity leaveEntity : leaves) {
-            leaveEntity.setUser(null);
-            leaveRepository.delete(leaveEntity);
-        }
+        leaves.forEach(leave -> {
+            leave.setUser(null);
+            leaveRepository.save(leave);
+        });
+
         userRepository.save(userEntity);
         userRepository.delete(userEntity);
     }

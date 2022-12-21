@@ -36,7 +36,7 @@ public class LeaveService {
 
     @Autowired
     public LeaveService(LeaveRepository repository, UserService userService, UserRepository userRepository,
-                        EmailService emailService) {
+            EmailService emailService) {
         this.repository = repository;
         this.userService = userService;
         this.userRepository = userRepository;
@@ -46,8 +46,8 @@ public class LeaveService {
     @Transactional(readOnly = true)
     public LeaveEntity findLeaveById(Long id) throws Exception {
         return repository
-                .findById(id)
-                .orElseThrow(() -> new Exception(Constants.LEAVE_CANNOT_BE_FOUND_BY_ID.replace("leaveId", String.valueOf(id))));
+            .findById(id)
+            .orElseThrow(() -> new Exception(Constants.LEAVE_CANNOT_BE_FOUND_BY_ID.replace("leaveId", String.valueOf(id))));
     }
 
     @Transactional(readOnly = true)
@@ -70,10 +70,10 @@ public class LeaveService {
     @Transactional(readOnly = true)
     public List<LeaveEntity> findAllLeavesForAuthenticatedUser() {
         return Optional
-                .of(CurrentAuthenticatedUser.getCurrentUser())
-                .map(user -> userService.findUserById(user.getId()))
-                .orElse(null)
-                .getLeaves();
+            .of(CurrentAuthenticatedUser.getCurrentUser())
+            .map(user -> userService.findUserById(user.getId()))
+            .orElse(null)
+            .getLeaves();
     }
 
     public void saveLeaveToCurrentlyAuthenticatedUser(LeaveEntity leaveEntity) {
@@ -84,10 +84,10 @@ public class LeaveService {
             throw new RuntimeException(Constants.AUTHENTICATED_USER_CANNOT_CREATE_AN_LEAVE_REQUEST);
         }
 
-        long noOfDays = Duration
-                .between(leaveEntity.getFromDate().atStartOfDay(), leaveEntity.getToDate().atStartOfDay())
-                .toDays();
-        long daysFromHire = authenticatedUserEntity.getDaysFromHire();
+        int noOfDays = (int) Duration
+            .between(leaveEntity.getFromDate().atStartOfDay(), leaveEntity.getToDate().atStartOfDay())
+            .toDays();
+        int daysFromHire = authenticatedUserEntity.getDaysFromHire();
 
         if (leaveEntity.getFromDate().isBefore(LocalDate.now())) {
             throw new RuntimeException(Constants.FROM_DATE_CANNOT_BE_SET_BEFORE_CURRENT_DATE);
@@ -109,11 +109,11 @@ public class LeaveService {
         leaveEntity.setStatus(Constants.STATUS_PENDING);
         leaveEntity.setNoOfDays(noOfDays);
         authenticatedUserEntity
-                .setAnnualLeaveDays((int) (authenticatedUserEntity.getAnnualLeaveDays() - leaveEntity.getNoOfDays()));
+            .setAnnualLeaveDays((authenticatedUserEntity.getAnnualLeaveDays() - leaveEntity.getNoOfDays()));
         repository.save(leaveEntity);
 
         emailService
-                .sendMailToManager(leaveEntity.getLeaveReason(), String.format(USER_CREATED_LEAVE, user.getFullName()));
+            .sendMailToManager(leaveEntity.getLeaveReason(), String.format(USER_CREATED_LEAVE, user.getFullName()));
     }
 
     public void updateLeave(Long leaveId, String leaveReason, LocalDate fromDate, LocalDate toDate) throws Exception {
@@ -121,17 +121,18 @@ public class LeaveService {
 
         UserEntity userEntity = leaveEntity.getUser();
 
-        int userLeaveDays = (int) (userEntity.getAnnualLeaveDays() + leaveEntity.getNoOfDays());
+        int userLeaveDays = userEntity.getAnnualLeaveDays() + leaveEntity.getNoOfDays();
 
         leaveEntity.setLeaveReason(leaveReason);
         leaveEntity.setFromDate(fromDate);
         leaveEntity.setToDate(toDate);
-        leaveEntity.setNoOfDays(Duration.between(leaveEntity.getFromDate(), leaveEntity.getToDate()).toDays());
-        userEntity.setAnnualLeaveDays((int) (userLeaveDays - leaveEntity.getNoOfDays()));
+        leaveEntity.setNoOfDays((int) Duration.between(leaveEntity.getFromDate(), leaveEntity.getToDate()).toDays());
+        userEntity.setAnnualLeaveDays(userLeaveDays - leaveEntity.getNoOfDays());
         repository.save(leaveEntity);
 
         emailService
-                .sendMailToManager(leaveEntity.getLeaveReason(), String.format(USER_UPDATED_LEAVE, userEntity.getFirstName(), userEntity.getLastName()));
+            .sendMailToManager(leaveEntity.getLeaveReason(),
+                String.format(USER_UPDATED_LEAVE, userEntity.getFirstName(), userEntity.getLastName()));
     }
 
     public void acceptLeaveRequest(Long leaveId) throws Exception {
@@ -148,8 +149,8 @@ public class LeaveService {
         leaveEntity.setStatus(Constants.STATUS_ACCEPTED);
 
         emailService
-                .sendMailToEmployee(userEntityThatCreatedTheLeave, leaveEntity.getLeaveReason(),
-                        String.format(MANAGER_ACCEPTED_LEAVE, user.getFullName()));
+            .sendMailToEmployee(userEntityThatCreatedTheLeave, leaveEntity.getLeaveReason(),
+                String.format(MANAGER_ACCEPTED_LEAVE, user.getFullName()));
     }
 
     public void rejectLeaveRequest(Long leaveId) throws Exception {
@@ -164,12 +165,12 @@ public class LeaveService {
 
         UserEntity userEntityThatCreatedTheLeave = leaveEntity.getUser();
         userEntityThatCreatedTheLeave
-                .setAnnualLeaveDays((int) (userEntityThatCreatedTheLeave.getAnnualLeaveDays() + leaveEntity.getNoOfDays()));
+            .setAnnualLeaveDays(userEntityThatCreatedTheLeave.getAnnualLeaveDays() + leaveEntity.getNoOfDays());
         leaveEntity.setStatus(Constants.STATUS_REJECTED);
 
         emailService
-                .sendMailToEmployee(userEntityThatCreatedTheLeave, leaveEntity.getLeaveReason(),
-                        String.format(MANAGER_REJECTED_LEAVE, user.getFullName()));
+            .sendMailToEmployee(userEntityThatCreatedTheLeave, leaveEntity.getLeaveReason(),
+                String.format(MANAGER_REJECTED_LEAVE, user.getFullName()));
     }
 
     public void deleteLeave(Long id) throws Exception {
@@ -177,7 +178,7 @@ public class LeaveService {
 
         UserEntity userEntity = leaveEntity.getUser();
 
-        userEntity.setAnnualLeaveDays((int) (userEntity.getAnnualLeaveDays() + leaveEntity.getNoOfDays()));
+        userEntity.setAnnualLeaveDays(userEntity.getAnnualLeaveDays() + leaveEntity.getNoOfDays());
 
         repository.delete(leaveEntity);
     }
