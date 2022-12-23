@@ -45,6 +45,7 @@ public class UserEntity {
     @Column(name = "USERNAME", unique = true)
     private String username;
 
+    @Size(min = 8)
     @Column(name = "PASSWORD", nullable = false)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
@@ -60,7 +61,7 @@ public class UserEntity {
     private LocalDate hireDate;
 
     @Column(name = "DAYS_FROM_HIRE", nullable = false)
-    private long daysFromHire;
+    private int daysFromHire;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MANAGER_ID")
@@ -141,11 +142,11 @@ public class UserEntity {
         this.hireDate = hireDate;
     }
 
-    public long getDaysFromHire() {
+    public int getDaysFromHire() {
         return daysFromHire;
     }
 
-    public void setDaysFromHire(long daysFromHire) {
+    public void setDaysFromHire(int daysFromHire) {
         this.daysFromHire = daysFromHire;
     }
 

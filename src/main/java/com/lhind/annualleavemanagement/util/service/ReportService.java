@@ -36,11 +36,11 @@ public class ReportService {
         font.setFontHeight(16);
         style.setFont(font);
 
-        createCell(row, 0, "User ID", style);
-        createCell(row, 1, "Full Name", style);
-        createCell(row, 2, "E-mail", style);
-        createCell(row, 3, "Leave Reason", style);
-        createCell(row, 4, "From Date", style);
+        createCell(row, 0, "Full Name", style);
+        createCell(row, 1, "E-mail", style);
+        createCell(row, 2, "Leave Reason", style);
+        createCell(row, 3, "From Date", style);
+        createCell(row, 4, "To Date", style);
         createCell(row, 5, "To Date", style);
         createCell(row, 6, "Total Days", style);
     }
@@ -70,13 +70,13 @@ public class ReportService {
             Row row = sheet.createRow(rowCount++);
             int columnCount = 0;
 
-            createCell(row, columnCount++, user.getUserId().toString(), style);
             createCell(row, columnCount++, user.getFullName(), style);
             createCell(row, columnCount++, user.getEmail(), style);
             createCell(row, columnCount++, leave.getLeaveReason(), style);
             createCell(row, columnCount++, leave.getFromDate().toString(), style);
             createCell(row, columnCount++, leave.getToDate().toString(), style);
-            createCell(row, columnCount++, leave.getNoOfDays().toString(), style);
+            createCell(row, columnCount++, leave.getStatus(), style);
+            createCell(row, columnCount++, leave.getNoOfDays(), style);
         }
     }
 
