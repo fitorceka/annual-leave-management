@@ -22,4 +22,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     @Query("SELECT u FROM UserEntity u WHERE u.role = 'EMPLOYEE' and u.manager.userId = ?1")
     List<UserEntity> findAllUsersUnderManager(Long managerId);
+
+    @Query("SELECT u.userId FROM UserEntity u")
+    List<Long> findAllIds();
 }

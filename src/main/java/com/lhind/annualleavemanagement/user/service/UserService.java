@@ -156,4 +156,22 @@ public class UserService implements UserDetailsService {
         authenticatedUserEntity.setPassword(bCryptPasswordEncoder.encode(newPassword));
         userRepository.save(authenticatedUserEntity);
     }
+
+    public void dataUpdate(Long id) {
+        UserEntity user = findUserById(id);
+
+        int daysFromHire = (int) Duration
+            .between(user.getHireDate().atStartOfDay(), LocalDate.now().atStartOfDay())
+            .toDays();
+
+        if (user.getDaysFromHire() != daysFromHire) {
+            user.setDaysFromHire(daysFromHire);
+
+            if (daysFromHire == 90) {
+                user.setAnnualLeaveDays(20);
+            }
+
+            userRepository.save(user);
+        }
+    }
 }
