@@ -17,7 +17,7 @@ public abstract class UserMapper {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Mapping(ignore = true, target = "password")
+    @Mapping(target = "password", ignore = true)
     public abstract UserDto toDto(UserEntity entity, @Context UserMapperContext context);
 
     @Mapping(target = "password", source = "dto", qualifiedByName = "encodePassword")

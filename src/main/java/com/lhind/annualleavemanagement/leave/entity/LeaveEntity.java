@@ -17,8 +17,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lhind.annualleavemanagement.user.entity.UserEntity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
 @Table(name = "LEAVES")
+@Getter
+@Setter
 public class LeaveEntity {
 
     @Id
@@ -48,60 +53,4 @@ public class LeaveEntity {
     @JsonIgnore
     @JoinColumn(name = "USER_ID")
     private UserEntity user;
-
-    public Long getLeaveId() {
-        return leaveId;
-    }
-
-    public void setLeaveId(Long leaveId) {
-        this.leaveId = leaveId;
-    }
-
-    public String getLeaveReason() {
-        return leaveReason;
-    }
-
-    public void setLeaveReason(String leaveReason) {
-        this.leaveReason = leaveReason;
-    }
-
-    public LocalDate getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(LocalDate fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public LocalDate getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(LocalDate toDate) {
-        this.toDate = toDate;
-    }
-
-    public int getNoOfDays() {
-        return noOfDays;
-    }
-
-    public void setNoOfDays(int noOfDays) {
-        this.noOfDays = noOfDays;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public UserEntity getUser() {
-        return user;
-    }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
 }
