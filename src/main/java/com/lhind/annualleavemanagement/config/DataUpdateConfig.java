@@ -26,7 +26,7 @@ public class DataUpdateConfig {
     }
 
     @Bean
-    public SimpleTriggerFactoryBean manifestResponseTaskSchedulerJobTrigger(JobDetail jobDetail) {
+    public SimpleTriggerFactoryBean taskSchedulerJobTrigger(JobDetail jobDetail) {
         return setupTrigger(jobDetail, "Starting Data Update Scheduler Job");
     }
 

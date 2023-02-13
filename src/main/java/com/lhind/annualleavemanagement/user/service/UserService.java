@@ -3,6 +3,7 @@ package com.lhind.annualleavemanagement.user.service;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,11 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.lhind.annualleavemanagement.leave.entity.LeaveEntity;
 import com.lhind.annualleavemanagement.leave.repository.LeaveRepository;
-import com.lhind.annualleavemanagement.security.CustomUserDetails;
+import com.lhind.annualleavemanagement.security.CurrentAuthenticatedUser;
 import com.lhind.annualleavemanagement.user.entity.UserEntity;
 import com.lhind.annualleavemanagement.user.repository.UserRepository;
 import com.lhind.annualleavemanagement.util.Constants;
-import com.lhind.annualleavemanagement.util.CurrentAuthenticatedUser;
+import com.lhind.annualleavemanagement.util.enums.Role;
 
 @Service
 @Transactional
@@ -26,19 +27,18 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private LeaveRepository leaveRepository;
+
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = userRepository.findUserByEmail(username);
-        if (userEntity == null) {
-            throw new UsernameNotFoundException(Constants.USER_NOT_FOUND);
-        }
-
-        return new CustomUserDetails(userEntity);
+        return userRepository
+            .findUserByEmail(username)
+            .orElseThrow(() -> new UsernameNotFoundException(Constants.USER_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
@@ -79,14 +79,13 @@ public class UserService implements UserDetailsService {
         userRepository.save(userEntity);
     }
 
-    public void updateUser(Long userId, String firstName, String lastName, String email, String userName, String role) {
+    public void updateUser(Long userId, String firstName, String lastName, String email, String role) {
         UserEntity userEntity = findUserById(userId);
 
         userEntity.setFirstName(firstName);
         userEntity.setLastName(lastName);
         userEntity.setEmail(email);
-        userEntity.setUsername(userName);
-        userEntity.setRole(role);
+        userEntity.setRole(Role.valueOf(role));
 
         userRepository.save(userEntity);
     }
@@ -94,7 +93,7 @@ public class UserService implements UserDetailsService {
     public void deleteUser(Long id) {
         UserEntity userEntity = findUserById(id);
 
-        if (userEntity.getRole().equals(Constants.ROLE_MANAGER)) {
+        if (userEntity.getRole() == Role.MANAGER) {
             List<UserEntity> userEntities = userRepository.findAllUsersUnderManager(userEntity.getUserId());
             userEntities.forEach(user -> {
                 user.setManager(null);
@@ -119,42 +118,40 @@ public class UserService implements UserDetailsService {
         if (!bCryptPasswordEncoder.matches(oldPassword, userEntity.getPassword())) {
             throw new RuntimeException(Constants.OLD_PASSWORD_DOES_NOT_MATCH);
         }
+
         userEntity.setPassword(bCryptPasswordEncoder.encode(newPassword));
         userRepository.save(userEntity);
     }
 
     public void setManager(Long userId, String managerEmail) {
         UserEntity userEntity = findUserById(userId);
-        UserEntity manager = userRepository.findUserByEmail(managerEmail);
+        Optional<UserEntity> manager = userRepository.findUserByEmail(managerEmail);
 
-        if (!manager.getRole().equals(Constants.ROLE_MANAGER)) {
-            throw new RuntimeException(Constants.USER_NOT_MANAGER);
-        }
-
-        userEntity.setManager(manager);
+        manager
+            .filter(m -> m.getRole() == Role.MANAGER)
+            .ifPresent(userEntity::setManager);
     }
 
     @Transactional(readOnly = true)
     public List<UserEntity> findAllUsersUnderCurrentManager() {
-        CustomUserDetails user = CurrentAuthenticatedUser.getCurrentUser();
-        UserEntity manager = findUserById(user.getId());
+        UserEntity user = CurrentAuthenticatedUser.getCurrentUser();
 
-        if (!manager.getRole().equals(Constants.ROLE_MANAGER)) {
+        if (!(user.getRole() == Role.MANAGER)) {
             throw new RuntimeException(Constants.AUTHENTICATED_USER_IS_NOT_A_MANAGER);
         }
 
-        return userRepository.findAllUsersUnderManager(manager.getUserId());
+        return userRepository.findAllUsersUnderManager(user.getUserId());
     }
 
     public void changePasswordForAuthenticatedUser(String oldPassword, String newPassword) {
-        CustomUserDetails user = CurrentAuthenticatedUser.getCurrentUser();
-        UserEntity authenticatedUserEntity = findUserById(user.getId());
+        UserEntity user = CurrentAuthenticatedUser.getCurrentUser();
 
-        if (!bCryptPasswordEncoder.matches(oldPassword, authenticatedUserEntity.getPassword())) {
+        if (!bCryptPasswordEncoder.matches(oldPassword, user.getPassword())) {
             throw new RuntimeException(Constants.OLD_PASSWORD_DOES_NOT_MATCH);
         }
-        authenticatedUserEntity.setPassword(bCryptPasswordEncoder.encode(newPassword));
-        userRepository.save(authenticatedUserEntity);
+
+        user.setPassword(bCryptPasswordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
     public void dataUpdate(Long id) {

@@ -27,7 +27,7 @@
     <h3 style="color: black">Register New User</h3>
     <hr>
 
-    <form action="#" th:action="@{/admin/saveUser}" th:object="${user}" method="post">
+    <form id="register-user" action="#" th:action="@{/admin/saveUser}" th:object="${user}" method="post">
 
         <input hidden="hidden" th:field="*{userId}">
 
@@ -35,9 +35,9 @@
                placeholder="First Name"/>
         <input type="text" th:field="*{lastName}" class="center-block form-control mb-4 col-4" placeholder="Last Name"/>
         <input type="email" th:field="*{email}" class="center-block form-control mb-4 col-4" placeholder="Email"/>
-        <input type="password" th:field="*{password}" class="center-block form-control mb-4 col-4"
+        <input type="password" th:field="*{password}" id="password" class="center-block form-control mb-4 col-4"
                placeholder="Password"/>
-        <input type="text" th:field="*{username}" class="center-block form-control mb-4 col-4" placeholder="Username"/>
+        <p id="date-error" style="color: red"></p>
         <input type="date" th:field="*{hireDate}" class="center-block form-control mb-4 col-4" placeholder="Hire Date"/>
         <label style="color: black">ROLE:</label>
         <select th:field="*{role}">
@@ -46,11 +46,32 @@
             <option value="EMPLOYEE">EMPLOYEE</option>
         </select>
         <hr>
-        <button type="submit" class="btn btn-info col-2">Save</button>
+        <button type="submit" onclick="validatePassword()" class="btn btn-info col-2">Save</button>
     </form>
 
     <hr>
     <a th:href="@{/mainApp}" style="color: blue">Back to Main App</a>
 </div>
+
+<script>
+    function validatePassword() {
+        let pass = document.getElementById("password").value;
+        let form = document.getElementById("register-user");
+        let dateError = document.getElementById("date-error");
+
+        form.addEventListener('submit', (e) => {
+            let message;
+
+            if (pass.length < 8) {
+                message = "Password must not be less than 8 chars long."
+            }
+
+            if (message.length > 0) {
+                e.preventDefault();
+                dateError.innerText = message;
+            }
+        })
+    }
+</script>
 </body>
 </html>

@@ -6,10 +6,6 @@ public class Constants {
     public static final String ROLE_MANAGER = "MANAGER";
     public static final String ROLE_EMPLOYEE = "EMPLOYEE";
 
-    public static final String STATUS_PENDING = "PENDING";
-    public static final String STATUS_ACCEPTED = "ACCEPTED";
-    public static final String STATUS_REJECTED = "REJECTED";
-
     public static final String AUTHENTICATED_USER_IS_NOT_A_MANAGER = "Authenticated user is not a Manager";
     public static final String AUTHENTICATED_USER_IS_NOT_AN_EMPLOYEE = "Authenticated user is not an Employee";
     public static final String AUTHENTICATED_USER_CANNOT_CREATE_AN_LEAVE_REQUEST = "Authenticated User cannot create an Leave Request";
@@ -30,7 +26,7 @@ public class Constants {
 
     public static final String MANAGER_REJECTED_LEAVE = "Your manager: %s rejected your leave request";
     public static final String MANAGER_ACCEPTED_LEAVE = "Your manager: %s accepted your leave request";
-    
+
     public static final String USER_CREATED_LEAVE = "Employee: %s created new leave request.";
     public static final String USER_UPDATED_LEAVE = "Employee: %s %s updated a leave request";
 }

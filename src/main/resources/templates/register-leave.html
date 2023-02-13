@@ -43,15 +43,18 @@
             </select>
         </label>
 
-        <input id="from-date" type="date" th:field="*{fromDate}" class="center-block form-control mb-4 col-4"
+        <input id="from-date" type="date" th:field="*{fromDate}"
+               class="center-block form-control mb-4 col-4"
                placeholder="From Date" required/>
-        <input id="to-date" type="date" th:field="*{toDate}" class="center-block form-control mb-4 col-4"
+        <input id="to-date" type="date" th:field="*{toDate}"
+               class="center-block form-control mb-4 col-4"
                placeholder="To Date" required/>
         <p id="date-error" style="color: red"></p>
 
         <hr>
 
-        <button th:disabled="${user.daysFromHire < 90 || user.annualLeaveDays < 1}" id="save-leave" type="submit"
+        <button th:disabled="${user.daysFromHire < 90 || user.annualLeaveDays < 1 || user.getAnnualLeaveDays() == 0}"
+                id="save-leave" type="submit"
                 class="btn btn-info col-2" onclick="return validateDates()">Save Leave
         </button>
     </form>

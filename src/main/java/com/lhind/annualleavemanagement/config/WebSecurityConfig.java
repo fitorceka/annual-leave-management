@@ -10,10 +10,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.lhind.annualleavemanagement.user.service.UserService;
-import com.lhind.annualleavemanagement.util.Constants;
+import com.lhind.annualleavemanagement.util.enums.Role;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class WebSecurityConfig {
 
     @Bean
@@ -38,18 +41,21 @@ public class WebSecurityConfig {
     @Bean
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-            .authorizeRequests()
+            .csrf()
+            .disable()
+            .authorizeHttpRequests()
             .antMatchers("/login", "/")
             .permitAll()
             .antMatchers("/admin/**")
-            .hasAuthority(Constants.ROLE_ADMIN)
+            .hasAuthority(String.valueOf(Role.ADMIN))
             .antMatchers("/manager/**")
-            .hasAuthority(Constants.ROLE_MANAGER)
+            .hasAuthority(String.valueOf(Role.MANAGER))
             .antMatchers("/user/**")
-            .hasAuthority(Constants.ROLE_EMPLOYEE)
+            .hasAuthority(String.valueOf(Role.EMPLOYEE))
             .anyRequest()
             .authenticated()
             .and()
+            .authenticationProvider(authenticationProvider())
             .formLogin()
             .loginPage("/login")
             .usernameParameter("email")
