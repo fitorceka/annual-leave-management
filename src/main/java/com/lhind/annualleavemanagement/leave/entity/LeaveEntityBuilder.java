@@ -3,15 +3,17 @@ package com.lhind.annualleavemanagement.leave.entity;
 import java.time.LocalDate;
 
 import com.lhind.annualleavemanagement.user.entity.UserEntity;
+import com.lhind.annualleavemanagement.util.enums.LeaveReason;
+import com.lhind.annualleavemanagement.util.enums.Status;
 
 public final class LeaveEntityBuilder {
 
     private Long leaveId;
-    private String leaveReason;
+    private LeaveReason leaveReason;
     private LocalDate fromDate;
     private LocalDate toDate;
     private int noOfDays;
-    private String status;
+    private Status status;
     private UserEntity user;
 
     public static LeaveEntityBuilder newBuilder() {
@@ -23,7 +25,7 @@ public final class LeaveEntityBuilder {
         return this;
     }
 
-    public LeaveEntityBuilder withLeaveReason(String leaveReason) {
+    public LeaveEntityBuilder withLeaveReason(LeaveReason leaveReason) {
         this.leaveReason = leaveReason;
         return this;
     }
@@ -43,7 +45,7 @@ public final class LeaveEntityBuilder {
         return this;
     }
 
-    public LeaveEntityBuilder withStatus(String status) {
+    public LeaveEntityBuilder withStatus(Status status) {
         this.status = status;
         return this;
     }

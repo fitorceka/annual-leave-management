@@ -4,7 +4,6 @@ CREATE TABLE USERS
     FIRST_NAME        VARCHAR(100),
     LAST_NAME         VARCHAR(100),
     EMAIL             VARCHAR(100),
-    USERNAME          VARCHAR(100),
     PASSWORD          VARCHAR(100),
     ANNUAL_LEAVE_DAYS NUMERIC,
     ROLE              VARCHAR(100),

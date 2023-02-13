@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,12 +15,12 @@ import com.lhind.annualleavemanagement.leave.dto.LeaveDto;
 import com.lhind.annualleavemanagement.leave.mapper.LeaveMapper;
 import com.lhind.annualleavemanagement.leave.mapper.LeaveMapperContext;
 import com.lhind.annualleavemanagement.leave.service.LeaveService;
-import com.lhind.annualleavemanagement.security.CustomUserDetails;
+import com.lhind.annualleavemanagement.security.CurrentAuthenticatedUser;
 import com.lhind.annualleavemanagement.user.dto.UserDto;
 import com.lhind.annualleavemanagement.user.mapper.UserMapper;
 import com.lhind.annualleavemanagement.user.mapper.UserMapperContext;
 import com.lhind.annualleavemanagement.user.service.UserService;
-import com.lhind.annualleavemanagement.util.CurrentAuthenticatedUser;
+import com.lhind.annualleavemanagement.util.Constants;
 
 @Controller
 public class UserController {
@@ -37,11 +38,13 @@ public class UserController {
         this.leaveMapper = leaveMapper;
     }
 
+    @PreAuthorize(Constants.ROLE_MANAGER)
     @GetMapping("/manager/managerHome")
     public String showHomeForManagers() {
         return "manager-home";
     }
 
+    @PreAuthorize(Constants.ROLE_MANAGER)
     @GetMapping("/manager/showUsersUnderManager")
     public String showUsersUnderManager(Model model) {
         List<UserDto> usersUnderCurrentManager = userService
@@ -55,15 +58,16 @@ public class UserController {
         return "users-under-manager";
     }
 
+    @PreAuthorize(Constants.ROLE_EMPLOYEE)
     @GetMapping("/user/userHome")
     public String showUserHome() {
         return "user-home";
     }
 
+    @PreAuthorize(Constants.ROLE_EMPLOYEE)
     @GetMapping("/user/manageMyLeaves")
     public String manageMyLeaves(Model model) {
-        CustomUserDetails currentAuthenticatedUser = CurrentAuthenticatedUser.getCurrentUser();
-        UserDto user = mapper.toDto(userService.findUserById(currentAuthenticatedUser.getId()), new UserMapperContext());
+        UserDto user = mapper.toDto(CurrentAuthenticatedUser.getCurrentUser(), new UserMapperContext());
 
         List<LeaveDto> leaves = leaveService
             .findAllLeavesForAuthenticatedUser()

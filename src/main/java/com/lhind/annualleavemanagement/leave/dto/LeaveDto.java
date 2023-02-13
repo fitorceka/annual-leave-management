@@ -7,7 +7,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.lhind.annualleavemanagement.user.dto.UserDto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
+@Setter
 public class LeaveDto {
 
     private Long leaveId;
@@ -19,60 +24,4 @@ public class LeaveDto {
     private int noOfDays;
     private String status;
     private UserDto user;
-
-    public Long getLeaveId() {
-        return leaveId;
-    }
-
-    public void setLeaveId(Long leaveId) {
-        this.leaveId = leaveId;
-    }
-
-    public String getLeaveReason() {
-        return leaveReason;
-    }
-
-    public void setLeaveReason(String leaveReason) {
-        this.leaveReason = leaveReason;
-    }
-
-    public LocalDate getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(LocalDate fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public LocalDate getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(LocalDate toDate) {
-        this.toDate = toDate;
-    }
-
-    public int getNoOfDays() {
-        return noOfDays;
-    }
-
-    public void setNoOfDays(int noOfDays) {
-        this.noOfDays = noOfDays;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public UserDto getUser() {
-        return user;
-    }
-
-    public void setUser(UserDto user) {
-        this.user = user;
-    }
 }

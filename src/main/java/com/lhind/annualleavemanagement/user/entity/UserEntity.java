@@ -1,10 +1,13 @@
 package com.lhind.annualleavemanagement.user.entity;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,13 +20,22 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lhind.annualleavemanagement.leave.entity.LeaveEntity;
+import com.lhind.annualleavemanagement.util.enums.Role;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "USERS")
-public class UserEntity {
+@Getter
+@Setter
+public class UserEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,12 +50,9 @@ public class UserEntity {
     @Column(name = "LAST_NAME", nullable = false)
     private String lastName;
 
-    @Column(name = "EMAIL", unique = true)
+    @Column(name = "EMAIL", unique = true, nullable = false)
     @Email(message = "Email cannot be empty")
     private String email;
-
-    @Column(name = "USERNAME", unique = true)
-    private String username;
 
     @Size(min = 8)
     @Column(name = "PASSWORD", nullable = false)
@@ -53,8 +62,9 @@ public class UserEntity {
     @Column(name = "ANNUAL_LEAVE_DAYS", nullable = false)
     private int annualLeaveDays;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "ROLE", nullable = false)
-    private String role;
+    private Role role;
 
     @Column(name = "HIRE_DATE", nullable = false)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -70,103 +80,37 @@ public class UserEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<LeaveEntity> leaves;
 
-    public Long getUserId() {
-        return userId;
+    public String getFullName() {
+        return firstName + " " + lastName;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
+    @Override
+    public String getUsername() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public String getUsername() {
-        return username;
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public int getAnnualLeaveDays() {
-        return annualLeaveDays;
-    }
-
-    public void setAnnualLeaveDays(int annualLeaveDays) {
-        this.annualLeaveDays = annualLeaveDays;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public LocalDate getHireDate() {
-        return hireDate;
-    }
-
-    public void setHireDate(LocalDate hireDate) {
-        this.hireDate = hireDate;
-    }
-
-    public int getDaysFromHire() {
-        return daysFromHire;
-    }
-
-    public void setDaysFromHire(int daysFromHire) {
-        this.daysFromHire = daysFromHire;
-    }
-
-    public UserEntity getManager() {
-        return manager;
-    }
-
-    public void setManager(UserEntity manager) {
-        this.manager = manager;
-    }
-
-    public List<LeaveEntity> getLeaves() {
-        return leaves;
-    }
-
-    public void setLeaves(List<LeaveEntity> leaves) {
-        this.leaves = leaves;
-    }
-
-    public String getFullName() {
-        return firstName + " " + lastName;
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

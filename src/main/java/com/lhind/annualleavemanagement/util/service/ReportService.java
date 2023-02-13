@@ -16,9 +16,9 @@ import com.lhind.annualleavemanagement.leave.entity.LeaveEntity;
 import com.lhind.annualleavemanagement.user.entity.UserEntity;
 
 public class ReportService {
-    private XSSFWorkbook workbook;
+    private final XSSFWorkbook workbook;
     private XSSFSheet sheet;
-    private UserEntity user;
+    private final UserEntity user;
 
     public ReportService(UserEntity user) {
         workbook = new XSSFWorkbook();

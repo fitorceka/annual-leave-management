@@ -1,6 +1,7 @@
 package com.lhind.annualleavemanagement.user.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,7 +13,7 @@ import com.lhind.annualleavemanagement.user.entity.UserEntity;
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     @Query("SELECT u FROM UserEntity u WHERE u.email = ?1")
-    UserEntity findUserByEmail(String email);
+    Optional<UserEntity> findUserByEmail(String email);
 
     @Query("SELECT u FROM UserEntity u WHERE u.role <> 'ADMIN'")
     List<UserEntity> findAllUsers();
@@ -22,4 +23,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     @Query("SELECT u FROM UserEntity u WHERE u.role = 'EMPLOYEE' and u.manager.userId = ?1")
     List<UserEntity> findAllUsersUnderManager(Long managerId);
+
+    @Query("SELECT u.userId FROM UserEntity u")
+    List<Long> findAllIds();
 }

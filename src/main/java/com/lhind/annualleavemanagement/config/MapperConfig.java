@@ -7,5 +7,4 @@ import org.mapstruct.ReportingPolicy;
                             nullValueMappingStrategy = NullValueMappingStrategy.RETURN_NULL,
                             unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface MapperConfig {
-
 }

@@ -1,5 +1,7 @@
 package com.lhind.annualleavemanagement.controller;
 
+import static com.lhind.annualleavemanagement.util.Constants.ROLE_ADMIN;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,18 +15,20 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.lhind.annualleavemanagement.user.dto.UserDto;
 import com.lhind.annualleavemanagement.user.mapper.UserMapper;
 import com.lhind.annualleavemanagement.user.mapper.UserMapperContext;
 import com.lhind.annualleavemanagement.user.service.UserService;
-import com.lhind.annualleavemanagement.util.Constants;
 
 @Controller
-@PreAuthorize(Constants.ROLE_ADMIN)
+@PreAuthorize(ROLE_ADMIN)
+@RequestMapping(AdminController.ROOT_PATH)
 public class AdminController {
 
+    public static final String ROOT_PATH = "/admin";
     private final UserService userService;
     private final UserMapper userMapper;
 
@@ -34,7 +38,7 @@ public class AdminController {
         this.userMapper = userMapper;
     }
 
-    @GetMapping("/admin/users")
+    @GetMapping("/users")
     public String getAllUsers(Model model) {
         List<UserDto> allUsers = userService
             .findAllUsers()
@@ -47,7 +51,7 @@ public class AdminController {
         return "manage-users";
     }
 
-    @GetMapping("/admin/registerUser")
+    @GetMapping("/registerUser")
     public String addUser(Model model) {
         UserDto user = new UserDto();
 
@@ -56,14 +60,14 @@ public class AdminController {
         return "register-user";
     }
 
-    @PostMapping("/admin/saveUser")
+    @PostMapping("/saveUser")
     public String saveUser(@ModelAttribute("user") @Valid UserDto dto) {
         userService.saveUser(userMapper.toEntity(dto, new UserMapperContext()));
 
         return "redirect:/admin/users";
     }
 
-    @GetMapping("/admin/showUserFormForUpdate")
+    @GetMapping("/showUserFormForUpdate")
     public String showUserFormForUpdate(@RequestParam("userId") Long id, Model model) {
         UserDto user = userMapper.toDto(userService.findUserById(id), new UserMapperContext());
 
@@ -72,23 +76,22 @@ public class AdminController {
         return "update-user";
     }
 
-    @PostMapping("/admin/updateUser")
+    @PostMapping("/updateUser")
     public String updateUser(@ModelAttribute("user") @Valid UserDto user, @RequestParam("firstName") String firstName,
-            @RequestParam("lastName") String lastName, @RequestParam("email") String email,
-            @RequestParam("username") String username, @RequestParam("role") String role) {
-        userService.updateUser(user.getUserId(), firstName, lastName, email, username, role);
+            @RequestParam("lastName") String lastName, @RequestParam("email") String email, @RequestParam("role") String role) {
+        userService.updateUser(user.getUserId(), firstName, lastName, email, role);
 
         return "redirect:/admin/users";
     }
 
-    @GetMapping("/admin/deleteUser")
+    @GetMapping("/deleteUser")
     public String deleteUser(@RequestParam("userId") Long id) {
         userService.deleteUser(id);
 
         return "redirect:/admin/users";
     }
 
-    @GetMapping("/admin/showUserFormForUpdatePassword")
+    @GetMapping("/showUserFormForUpdatePassword")
     public String showUserFormForUpdatePassword(@RequestParam("userId") Long id, Model model) {
         UserDto user = userMapper.toDto(userService.findUserById(id), new UserMapperContext());
 
@@ -97,7 +100,7 @@ public class AdminController {
         return "change-password";
     }
 
-    @PostMapping("/admin/changePassword")
+    @PostMapping("/changePassword")
     public String changePassword(@ModelAttribute("user") @Valid UserDto user, @RequestParam("oldPassword") String oldPassword,
             @RequestParam("newPassword") String newPassword) {
         userService.changePassword(user.getUserId(), oldPassword, newPassword);
@@ -105,7 +108,7 @@ public class AdminController {
         return "redirect:/admin/users";
     }
 
-    @GetMapping("/admin/showSelectManager")
+    @GetMapping("/showSelectManager")
     public String showSelectManager(@RequestParam("userId") Long userId, Model model) {
         UserDto user = userMapper.toDto(userService.findUserById(userId), new UserMapperContext());
 
@@ -121,7 +124,7 @@ public class AdminController {
         return "select-manager";
     }
 
-    @PostMapping("/admin/setManager")
+    @PostMapping("/setManager")
     public String setManagerForUser(@ModelAttribute("user") @Valid UserDto user,
             @RequestParam("managerEmail") String managerEmail) {
         userService.setManager(user.getUserId(), managerEmail);

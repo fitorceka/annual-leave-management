@@ -1,48 +1,43 @@
 package com.lhind.annualleavemanagement.util.service;
 
-import com.lhind.annualleavemanagement.util.HasLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import com.lhind.annualleavemanagement.security.CustomUserDetails;
+import com.lhind.annualleavemanagement.security.CurrentAuthenticatedUser;
 import com.lhind.annualleavemanagement.user.entity.UserEntity;
-import com.lhind.annualleavemanagement.user.service.UserService;
 import com.lhind.annualleavemanagement.util.Constants;
-import com.lhind.annualleavemanagement.util.CurrentAuthenticatedUser;
-
-import java.util.concurrent.CompletableFuture;
+import com.lhind.annualleavemanagement.util.HasLogger;
+import com.lhind.annualleavemanagement.util.enums.Role;
 
 @Service
 public class EmailService implements HasLogger {
 
     private final JavaMailSender javaMailSender;
-    private final UserService userService;
 
     @Autowired
-    public EmailService(JavaMailSender javaMailSender, UserService userService) {
+    public EmailService(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
-        this.userService = userService;
     }
 
     public void sendMailToManager(String subject, String message) {
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 
-        CustomUserDetails currentAuthenticatedUser = CurrentAuthenticatedUser.getCurrentUser();
-        UserEntity userEntity = userService.findUserById(currentAuthenticatedUser.getId());
+        UserEntity user = CurrentAuthenticatedUser.getCurrentUser();
 
-        if (!userEntity.getRole().equals(Constants.ROLE_EMPLOYEE)) {
+        if (!(user.getRole() == Role.EMPLOYEE)) {
             throw new RuntimeException(Constants.AUTHENTICATED_USER_IS_NOT_AN_EMPLOYEE);
         }
-        simpleMailMessage.setTo(userEntity.getManager().getEmail());
+
+        simpleMailMessage.setTo(user.getManager().getEmail());
         simpleMailMessage.setSubject(subject);
         simpleMailMessage.setText(message);
 
-        simpleMailMessage.setFrom(userEntity.getEmail());
+        simpleMailMessage.setFrom(user.getEmail());
 
         try {
-            getLogger().info("Sending Email to {}", userEntity.getManager().getFirstName());
+            getLogger().info("Sending Email to {}", user.getManager().getFirstName());
             javaMailSender.send(simpleMailMessage);
         } catch (Exception e) {
             getLogger().error("Cannot send email");
@@ -52,10 +47,9 @@ public class EmailService implements HasLogger {
     public void sendMailToEmployee(UserEntity employee, String subject, String message) {
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 
-        CustomUserDetails currentAuthenticatedUser = CurrentAuthenticatedUser.getCurrentUser();
-        UserEntity userEntity = userService.findUserById(currentAuthenticatedUser.getId());
+        UserEntity user = CurrentAuthenticatedUser.getCurrentUser();
 
-        if (!userEntity.getRole().equals(Constants.ROLE_MANAGER)) {
+        if (!(user.getRole() == Role.MANAGER)) {
             throw new RuntimeException(Constants.AUTHENTICATED_USER_IS_NOT_A_MANAGER);
         }
 
@@ -63,7 +57,7 @@ public class EmailService implements HasLogger {
         simpleMailMessage.setSubject(subject);
         simpleMailMessage.setText(message);
 
-        simpleMailMessage.setFrom(userEntity.getEmail());
+        simpleMailMessage.setFrom(user.getEmail());
 
         try {
             getLogger().info("Sending Email to {}", employee.getFirstName());
